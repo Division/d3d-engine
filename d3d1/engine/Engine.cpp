@@ -5,6 +5,7 @@
 #include "render/buffer/D3DBuffer.h"
 
 std::shared_ptr<Shader> shader1;
+std::shared_ptr<D3DBuffer> buffer1;
 
 struct VERTEX {
 	FLOAT X, Y, Z;
@@ -23,7 +24,6 @@ Engine::~Engine()
 	backbuffer->Release();
 	context->Release();
 	pLayout->Release();
-	pVBuffer->Release();
 }
 
 void Engine::_initDirectX()
@@ -92,42 +92,12 @@ void Engine::_initPipeline() {
 		{-0.45f, -0.5f, 0.0f, {0.0f, 0.0f, 1.0f, 1.0f}}
 	};
 
-
-	// create the vertex buffer
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-
-	bd.Usage = D3D11_USAGE_DYNAMIC;                // write access access by CPU and GPU
-	bd.ByteWidth = sizeof(VERTEX) * 3;             // size is the VERTEX struct * 3
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;       // use as a vertex buffer
-	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;    // allow CPU to write in buffer
-
-	dev->CreateBuffer(&bd, NULL, &pVBuffer);       // create the buffer
-
-
-	// copy the vertices into the buffer
-	D3D11_MAPPED_SUBRESOURCE ms;
-	context->Map(pVBuffer, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);    // map the buffer
-	memcpy(ms.pData, OurVertices, sizeof(OurVertices));                 // copy the data
-	context->Unmap(pVBuffer, NULL);                                      // unmap the buffer
-
+	buffer1 = std::make_shared<D3DBuffer>(this, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC);
+	buffer1->appendData(OurVertices, sizeof(VERTEX) * 3);
+	buffer1->upload();
+	
 	shader1 = std::make_shared<Shader>(this);
 	shader1->loadFromFile("shader.hlsl.txt");
-
-	// load and compile the two shaders
-
-	/*
-	ID3D10Blob *VS, *PS;
-	D3DCompileFromFile(L"shader.hlsl.txt", 0, 0, "VShader", "vs_4_0", 0, 0, &VS, 0);
-	D3DCompileFromFile(L"shader.hlsl.txt", 0, 0, "PShader", "ps_4_0", 0, 0, &PS, 0);
-
-	// encapsulate both shaders into shader objects
-	dev->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &pVS);
-	dev->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &pPS);
-
-	// set the shader objects
-	context->VSSetShader(pVS, 0, 0);
-	context->PSSetShader(pPS, 0, 0);*/
 
 	// create the input layout object
 	D3D11_INPUT_ELEMENT_DESC ied[] =
@@ -150,7 +120,9 @@ void Engine::render() {
 	// select which vertex buffer to display
 	UINT stride = sizeof(VERTEX);
 	UINT offset = 0;
-	context->IASetVertexBuffers(0, 1, &pVBuffer, &stride, &offset);
+	const auto buffer = buffer1->buffer();
+
+	context->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
 
 	// select which primtive type we are using
 	context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

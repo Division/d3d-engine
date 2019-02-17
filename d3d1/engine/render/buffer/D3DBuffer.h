@@ -15,7 +15,7 @@ public:
 
 	void upload();
 
-	ID3D11Buffer *buffer() const { return _buffer;  }
+	ID3D11Buffer *buffer() { return _buffer;  }
 
 protected:
 	void _recreateBuffer();

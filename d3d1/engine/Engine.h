@@ -33,5 +33,4 @@ private:
 	ID3D11RenderTargetView *backbuffer;
 	
 	ID3D11InputLayout *pLayout;            // the pointer to the input layout
-	ID3D11Buffer *pVBuffer;                // the pointer to the vertex buffer
 };
