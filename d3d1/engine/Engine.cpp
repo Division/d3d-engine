@@ -92,9 +92,7 @@ void Engine::_initPipeline() {
 		{-0.45f, -0.5f, 0.0f, {0.0f, 0.0f, 1.0f, 1.0f}}
 	};
 
-	buffer1 = std::make_shared<D3DBuffer>(this, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC);
-	buffer1->appendData(OurVertices, sizeof(VERTEX) * 3);
-	buffer1->upload();
+	buffer1 = std::make_shared<D3DBuffer>(this, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, sizeof(VERTEX) * 3, OurVertices);
 	
 	shader1 = std::make_shared<Shader>(this);
 	shader1->loadFromFile("shader.hlsl.txt");
