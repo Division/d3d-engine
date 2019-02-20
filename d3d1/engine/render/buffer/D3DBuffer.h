@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 #include "MemoryBuffer.h"
-#include <d3d11.h>
+#include <d3d11_1.h>
 
 class ID3DContextProvider;
 

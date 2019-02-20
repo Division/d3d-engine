@@ -7,12 +7,15 @@
 std::shared_ptr<Shader> shader1;
 std::shared_ptr<D3DBuffer> buffer1;
 
+Engine *Engine::_instance = nullptr;
+
 struct VERTEX {
 	FLOAT X, Y, Z;
 	FLOAT Color[4];
 };
 
-Engine::Engine(HWND hWnd) : hWnd(hWnd) {
+Engine::Engine(HWND hWnd, std::weak_ptr<IGame> game) : hWnd(hWnd), _game(game) {
+	_instance = this;
 	ENGLogSetOutputFile("log.txt");
 	_initDirectX();
 }
@@ -53,9 +56,9 @@ void Engine::_initDirectX()
 		D3D11_SDK_VERSION,
 		&scd,
 		&swapchain,
-		&dev,
+		(ID3D11Device **)&dev,
 		NULL,
-		&context);
+		(ID3D11DeviceContext **)&context);
 
 	// get the address of the back buffer
 	ID3D11Texture2D *pBackBuffer;

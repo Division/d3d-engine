@@ -3,8 +3,11 @@
 
 #include "d3d1.h"
 #include "engine/Engine.h"
+#include "game/Game.h"
 
+std::shared_ptr<Game> game;
 std::unique_ptr<Engine> engine;
+
 void CleanD3D(void);         // closes Direct3D and releases memory
 
 
@@ -28,6 +31,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_ LPWSTR    lpCmdLine,
                      _In_ int       nCmdShow)
 {
+	game = std::make_shared<Game>();
+
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
@@ -124,7 +129,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    }
 
    ShowWindow(hWnd, nCmdShow);
-   engine = std::make_unique<Engine>(hWnd);
+   engine = std::make_unique<Engine>(hWnd, game);
 
    UpdateWindow(hWnd);
 

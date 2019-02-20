@@ -31,6 +31,36 @@
     <Filter Include="engine\system">
       <UniqueIdentifier>{84890d7d-025e-432d-9b5d-aeb7b0b90579}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\scene">
+      <UniqueIdentifier>{dd09f50d-c699-43b5-b6ae-e22ee474f1d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\render\renderer">
+      <UniqueIdentifier>{55a21466-8cc2-4500-b137-3a80efff5dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\utils">
+      <UniqueIdentifier>{dd9f1bb7-23fe-4621-8b0b-bcdebeddac60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\objects">
+      <UniqueIdentifier>{cc20b381-d418-4340-a0bc-92f451c783fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\render\shading">
+      <UniqueIdentifier>{601bf3a4-95f4-40dd-8139-e9ac0c5d2917}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\render\material">
+      <UniqueIdentifier>{d32070b5-9c6e-4a49-9556-970353dbce53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\render\mesh">
+      <UniqueIdentifier>{efc0511a-3547-4db8-96ea-b3b7b53e5646}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\render\shader">
+      <UniqueIdentifier>{540cc83c-75b8-4944-88bd-382e2426717b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\resources">
+      <UniqueIdentifier>{3297d118-48b1-445a-bdbb-60dd4cb80e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\loader">
+      <UniqueIdentifier>{7f2e4848-5c5c-41c3-b8d1-07a93dd59e4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -72,6 +102,114 @@
     <ClInclude Include="engine\render\buffer\D3DBuffer.h">
       <Filter>engine\buffer</Filter>
     </ClInclude>
+    <ClInclude Include="engine\DXCaps.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\buffer\D3DMemoryBuffer.h">
+      <Filter>engine\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\Scene.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\Transform.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\GameObject.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\renderer\ICameraParamsProvider.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineTypes.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\Math.h">
+      <Filter>engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\MeshGeneration.h">
+      <Filter>engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\Frustum.h">
+      <Filter>engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\renderer\IRenderer.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineMath.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\objects\Camera.h">
+      <Filter>engine\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\objects\LightObject.h">
+      <Filter>engine\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\objects\MeshObject.h">
+      <Filter>engine\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\objects\Projector.h">
+      <Filter>engine\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shading\IShadowCaster.h">
+      <Filter>engine\render\shading</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\renderer\RenderOperation.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\material\Material.h">
+      <Filter>engine\render\material</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\mesh\Mesh.h">
+      <Filter>engine\render\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shader\VertexInput.h">
+      <Filter>engine\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shader\ConstantBufferStruct.h">
+      <Filter>engine\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\buffer\MultiBufferAddress.h">
+      <Filter>engine\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\IGame.h">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="game\Game.h">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\resources\HierarchyData.h">
+      <Filter>engine\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\resources\ModelBundle.h">
+      <Filter>engine\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\resources\SkinningData.h">
+      <Filter>engine\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\loader\HierarchyLoader.h">
+      <Filter>engine\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\loader\ModelLoader.h">
+      <Filter>engine\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\loader\ModelLoaderUtils.h">
+      <Filter>engine\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\loader\ShaderLoader.h">
+      <Filter>engine\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\loader\SpritesheetLoader.h">
+      <Filter>engine\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\loader\TextureLoader.h">
+      <Filter>engine\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\scene\AnimationController.h">
+      <Filter>engine\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\objects\SkinnedMeshObject.h">
+      <Filter>engine\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -97,6 +235,87 @@
     </ClCompile>
     <ClCompile Include="engine\render\buffer\D3DBuffer.cpp">
       <Filter>engine\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\DXCaps.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\buffer\D3DMemoryBuffer.cpp">
+      <Filter>engine\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\Scene.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\Transform.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\GameObject.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utils\Math.cpp">
+      <Filter>engine\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utils\MeshGeneration.cpp">
+      <Filter>engine\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\EngineMath.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\objects\LightObject.cpp">
+      <Filter>engine\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\objects\MeshObject.cpp">
+      <Filter>engine\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\objects\Projector.cpp">
+      <Filter>engine\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\objects\Camera.cpp">
+      <Filter>engine\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\material\Material.cpp">
+      <Filter>engine\render\material</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\mesh\Mesh.cpp">
+      <Filter>engine\render\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\shader\VertexInput.cpp">
+      <Filter>engine\render\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="game\Game.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\resources\HierarchyData.cpp">
+      <Filter>engine\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\resources\ModelBundle.cpp">
+      <Filter>engine\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\resources\SkinningData.cpp">
+      <Filter>engine\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\loader\HierarchyLoader.cpp">
+      <Filter>engine\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\loader\ModelLoader.cpp">
+      <Filter>engine\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\loader\ModelLoaderUtils.cpp">
+      <Filter>engine\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\loader\ShaderLoader.cpp">
+      <Filter>engine\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\loader\SpritesheetLoader.cpp">
+      <Filter>engine\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\loader\TextureLoader.cpp">
+      <Filter>engine\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\scene\AnimationController.cpp">
+      <Filter>engine\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\objects\SkinnedMeshObject.cpp">
+      <Filter>engine\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

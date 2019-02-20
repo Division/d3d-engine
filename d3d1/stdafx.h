@@ -53,7 +53,7 @@ using namespace glm;
 #include <map>
 #include <list>
 #include <deque>
-#include <d3d11.h>
+#include <d3d11_1.h>
 #include <d3dcompiler.h>
 #pragma warning(pop) //For /Wall
 
@@ -62,6 +62,7 @@ using namespace glm;
 
 // C RunTime Header Files
 #include <stdlib.h>
+#include <stdint.h>
 #include <malloc.h>
 #include <memory.h>
 #include <tchar.h>
