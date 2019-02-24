@@ -12,7 +12,7 @@ class Engine;
 class IGame {
 public:
   virtual ~IGame() = default;
-  virtual void init(std::shared_ptr<Engine> engine) = 0;
+  virtual void init() = 0;
   virtual void update(float dt) = 0;
 };
 

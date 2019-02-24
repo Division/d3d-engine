@@ -16,7 +16,7 @@ void D3DMemoryBuffer::_recreateBuffer() {
 
 	if (_fixedSize > 0) {
 		targetSize = _fixedSize;
-		if (_size > _fixedSize) {
+		if ((int32_t)_size > _fixedSize) {
 			throw std::runtime_error("D3DBuffer fixedSize exceeded");
 		}
 	}

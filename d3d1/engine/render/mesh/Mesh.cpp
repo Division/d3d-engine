@@ -3,6 +3,7 @@
 //
 
 #include "Mesh.h"
+#include "Engine.h"
 #include <iostream>
 #include "system/Logging.h"
 //#include "render/shader/Shader.h"
@@ -24,15 +25,13 @@ const int COLOR_SIZE = 4;
 
 Mesh::Mesh(bool keepData, int componentCount, bool isStatic) :
     _keepData(keepData),
-    _componentCount(componentCount)
-   // _bufferUsage(isStatic)
+    _componentCount(componentCount),
+    _isStatic(isStatic)
 {
   _stride = 0;
   _faceCount = 0;
   _strideBytes = 0;
   _vertexCount = 0;
-//  _indexBuffer = 0;
-//  _vao = 0;
 
   _hasIndices = false;
   _hasVertices = false;
@@ -190,8 +189,6 @@ void Mesh::_deleteBuffer() {
 }
 
 void Mesh::createBuffer() {
-  _deleteBuffer();
-
   _stride = _getStrideSize();
   _strideBytes = _stride * 4;
 
@@ -241,11 +238,11 @@ void Mesh::createBuffer() {
     currentOffset += COLOR_SIZE;
   }
 
-  // Unsafe but fast filling buffer data by working with pointer directly
-  //_vbo = std::make_shared<VertexBufferObject>(GL_ARRAY_BUFFER, _bufferUsage);
-  //_vbo->resize(_strideBytes * _vertexCount);
-  //float *bufferData = (float *)_vbo->bufferPointer();
-  float *bufferData;
+  // Unsafe but fast filling buffer data by working with pointer directl
+
+  _vertexBuffer = std::make_shared<D3DMemoryBuffer>(Engine::Get(), D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC);
+  _vertexBuffer->resize(_strideBytes * _vertexCount);
+  float *bufferData = (float *)_vertexBuffer->bufferPointer();
 
   for (int i = 0; i < _vertexCount; i++) {
     int offset = i * _stride;
@@ -308,21 +305,17 @@ void Mesh::createBuffer() {
     }
   }
 
-  //_vbo->upload();
-  //_vbo->erase();
+  _vertexBuffer->upload();
+  _vertexBuffer->erase();
 
   if (_hasIndices) {
-    /*_indexBuffer = std::make_shared<VertexBufferObject>(GL_ELEMENT_ARRAY_BUFFER, _bufferUsage);
+	_indexBuffer = std::make_shared<D3DMemoryBuffer>(Engine::Get(), D3D11_BIND_INDEX_BUFFER, D3D11_USAGE_DYNAMIC);
     unsigned int indexSize = (unsigned int)_indices.size() * (unsigned int)sizeof(uint16_t);
     _indexBuffer->resize(indexSize);
     _indexBuffer->writeData((void *)&_indices[0], 0, indexSize);
     _indexBuffer->upload();
-    _indexBuffer->erase();*/
+    _indexBuffer->erase();
   }
-
-//  if (!_vao) {
-//    this->_prepareVAO();
-//  }
 
   _calculateAABB();
 
@@ -341,79 +334,8 @@ void Mesh::createBuffer() {
 }
 
 void Mesh::_prepareVAO() {
-	/*
-  glGenVertexArrays(1, &_vao);
-  glBindVertexArray(_vao);
-  _vbo->bind();
-
-  if (_hasIndices) {
-    _indexBuffer->bind();
-  }
-
-  void *offset;
-  GLuint attribIndex = 0;
-  offset = BUFFER_OFFSET(this->vertexOffsetBytes());
-
-  attribIndex = (GLuint)ShaderAttrib::Position;
-  glEnableVertexAttribArray(attribIndex);
-  glVertexAttribPointer(attribIndex, VERTEX_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-
-  if (_hasColors) {
-    attribIndex = (GLuint)ShaderAttrib::VertexColor;
-    offset = BUFFER_OFFSET(this->colorOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, COLOR_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-  }
-
-
-  if (_hasNormals) {
-    attribIndex = (GLuint)ShaderAttrib::Normal;
-    offset = BUFFER_OFFSET(this->normalOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, VERTEX_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-  }
-
-  if (_hasTBN) {
-    attribIndex = (GLuint)ShaderAttrib::Tangent;
-    offset = BUFFER_OFFSET(this->tangentOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, VERTEX_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-
-    attribIndex = (GLuint)ShaderAttrib::Bitangent;
-    offset = BUFFER_OFFSET(this->bitangentOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, VERTEX_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-  }
-
-  if (_hasTexCoord0) {
-    attribIndex = (GLuint)ShaderAttrib::TexCoord0;
-    offset = BUFFER_OFFSET(this->texCoordOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, TEXCOORD_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-  }
-
-  if (_hasCorners) {
-    attribIndex = (GLuint)ShaderAttrib::Corner;
-    offset = BUFFER_OFFSET(this->cornerOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, CORNER_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-  }
-
-  if (_hasWeights) {
-    attribIndex = (GLuint)ShaderAttrib::JointWeights;
-    offset = BUFFER_OFFSET(this->weightOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, WEIGHT_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-
-    attribIndex = (GLuint)ShaderAttrib::JointIndices;
-    offset = BUFFER_OFFSET(this->jointIndexOffsetBytes());
-    glEnableVertexAttribArray(attribIndex);
-    glVertexAttribPointer(attribIndex, JOINT_INDEX_SIZE, GL_FLOAT, GL_FALSE, this->strideBytes(), offset);
-  }
-
-  glBindVertexArray(0); */
+	
 }
-
 
 int Mesh::_getStrideSize() {
   int result = 0;

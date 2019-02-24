@@ -4,7 +4,8 @@
 
 #include "MeshGeneration.h"
 #include <vector>
-/*
+#include <algorithm>
+
 void MeshGeneration::generateSphere(MeshPtr mesh, int parallelCount, int meridianCount, float radius) {
   std::vector<vec3> vertices;
   std::vector<uint16_t> indices;
@@ -109,6 +110,7 @@ void MeshGeneration::generateQuad(MeshPtr mesh, vec2 size, vec2 origin) {
       vec3(-1, 1, 0) * halfSize + offset
   };
 
+
   std::vector<vec2> texCoords = {
       vec2(0, 1),
       vec2(0, 0),
@@ -118,8 +120,8 @@ void MeshGeneration::generateQuad(MeshPtr mesh, vec2 size, vec2 origin) {
       vec2(0, 1)
   };
 
+  std::reverse(vertices.begin(), vertices.end());
+  std::reverse(texCoords.begin(), texCoords.end());
   mesh->setVertices(vertices);
   mesh->setTexCoord0(texCoords);
 }
-
-*/

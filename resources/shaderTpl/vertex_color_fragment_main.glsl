@@ -1,0 +1,1 @@
+  fragmentColor *= vVertexColor;

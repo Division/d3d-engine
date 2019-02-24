@@ -1,9 +1,9 @@
+#pragma once
+
 //
 // Created by Sidorenko Nikita on 4/22/18.
 //
 
-#ifndef CPPWRAPPER_MATH_H
-#define CPPWRAPPER_MATH_H
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -106,4 +106,8 @@ struct Rect {
   operator vec4() const { return vec4(x, y, width, height); }
 };
 
-#endif //CPPWRAPPER_MATH_H
+inline int32_t getPowerOfTwo(int32_t value) {
+	float result = log2((float)value);
+	return pow(2, (int)ceilf(result));
+}
+

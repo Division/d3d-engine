@@ -10,8 +10,9 @@
 #include <memory>
 #include <d3d11_1.h>
 
-extern const int JOINT_PER_VERTEX_MAX;
+class D3DMemoryBuffer;
 
+extern const int JOINT_PER_VERTEX_MAX;
 
 class Mesh {
 public:
@@ -20,6 +21,9 @@ public:
 
   static const int JOINTS_MAX = 70;
   static const int JOINT_PER_VERTEX_MAX = 3;
+
+  std::shared_ptr<D3DMemoryBuffer> vertexBuffer() const { return _vertexBuffer; }
+  std::shared_ptr<D3DMemoryBuffer> indexBuffer() const { return _indexBuffer; }
 
   void setVertices(const vec3 *vertices, int vertexCount);
   void setVertices(const float *vertexComponents, int vertexCount);
@@ -104,7 +108,10 @@ private:
 
   //std::shared_ptr<VertexBufferObject> _vbo;
   //std::shared_ptr<VertexBufferObject> _indexBuffer;
+  std::shared_ptr<D3DMemoryBuffer> _vertexBuffer;
+  std::shared_ptr<D3DMemoryBuffer> _indexBuffer;
 
+  bool _isStatic;
   bool _keepData;
   int _componentCount;
   int _faceCount;

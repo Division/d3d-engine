@@ -28,6 +28,9 @@ typedef std::shared_ptr<Camera> CameraPtr;
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 
+class MeshObject;
+typedef std::shared_ptr<MeshObject> MeshObjectPtr;
+
 class SkinnedMeshObject;
 typedef std::shared_ptr<SkinnedMeshObject> SkinnedMeshObjectPtr;
 
@@ -58,6 +61,8 @@ typedef std::shared_ptr<SwappableFrameBufferObject> SwappableFrameBufferObjectPt
 class FrameBufferObject;
 typedef std::shared_ptr<FrameBufferObject> FrameBufferObjectPtr;
 
+class ICameraParamsProvider;
+typedef std::shared_ptr<ICameraParamsProvider> ICameraParamsProviderPtr;
 
 #endif //CPPWRAPPER_ENGTYPES_H
 

@@ -157,6 +157,7 @@
     <ClInclude Include="engine\core\IEngineResource.h" />
     <ClInclude Include="engine\DXCaps.h" />
     <ClInclude Include="engine\Engine.h" />
+    <ClInclude Include="engine\EngineImage.h" />
     <ClInclude Include="engine\EngineMath.h" />
     <ClInclude Include="engine\EngineTypes.h" />
     <ClInclude Include="engine\IGame.h" />
@@ -180,10 +181,14 @@
     <ClInclude Include="engine\render\renderer\ICameraParamsProvider.h" />
     <ClInclude Include="engine\render\renderer\IRenderer.h" />
     <ClInclude Include="engine\render\renderer\RenderOperation.h" />
+    <ClInclude Include="engine\render\renderer\SceneRenderer.h" />
     <ClInclude Include="engine\render\Shader.h" />
     <ClInclude Include="engine\render\shader\ConstantBufferStruct.h" />
     <ClInclude Include="engine\render\shader\VertexInput.h" />
     <ClInclude Include="engine\render\shading\IShadowCaster.h" />
+    <ClInclude Include="engine\render\texture\SpriteSheet.h" />
+    <ClInclude Include="engine\render\texture\Texture.h" />
+    <ClInclude Include="engine\render\texture\TextureSlot.h" />
     <ClInclude Include="engine\resources\HierarchyData.h" />
     <ClInclude Include="engine\resources\ModelBundle.h" />
     <ClInclude Include="engine\resources\SkinningData.h" />
@@ -206,6 +211,7 @@
     <ClCompile Include="d3d1.cpp" />
     <ClCompile Include="engine\DXCaps.cpp" />
     <ClCompile Include="engine\Engine.cpp" />
+    <ClCompile Include="engine\EngineImage.cpp" />
     <ClCompile Include="engine\EngineMath.cpp" />
     <ClCompile Include="engine\loader\HierarchyLoader.cpp" />
     <ClCompile Include="engine\loader\ModelLoader.cpp" />
@@ -223,8 +229,11 @@
     <ClCompile Include="engine\render\buffer\MemoryBuffer.cpp" />
     <ClCompile Include="engine\render\material\Material.cpp" />
     <ClCompile Include="engine\render\mesh\Mesh.cpp" />
+    <ClCompile Include="engine\render\renderer\SceneRenderer.cpp" />
     <ClCompile Include="engine\render\Shader.cpp" />
     <ClCompile Include="engine\render\shader\VertexInput.cpp" />
+    <ClCompile Include="engine\render\texture\SpriteSheet.cpp" />
+    <ClCompile Include="engine\render\texture\Texture.cpp" />
     <ClCompile Include="engine\resources\HierarchyData.cpp" />
     <ClCompile Include="engine\resources\ModelBundle.cpp" />
     <ClCompile Include="engine\resources\SkinningData.cpp" />

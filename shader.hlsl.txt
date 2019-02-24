@@ -1,21 +1,35 @@
+struct VIn {
+    float4 position : POSITION;
+    float2 texCoord0 : TEXCOORD;
+};
+
 struct VOut
 {
     float4 position : SV_POSITION;
-    float4 color : COLOR;
+    float2 texCoord0 : TEXCOORD;
 };
 
-VOut VShader(float4 position : POSITION, float4 color : COLOR)
+cbuffer VS_CONSTANT_BUFFER : register(b0)
+{
+    float4x4 modelMatrix;
+};
+
+VOut VShader(VIn input)
 {
     VOut output;
 
-    output.position = position;
-    output.color = color;
-	//asd
+    output.position = mul(input.position, modelMatrix);
+    output.texCoord0 = input.texCoord0;
+    
     return output;
 }
 
+Texture2D texture0;
+Texture2D shaderTexture;
+SamplerState SampleType;
 
-float4 PShader(float4 position : SV_POSITION, float4 color : COLOR) : SV_TARGET
+float4 PShader(VOut input) : SV_TARGET
 {
-    return color;
+    float4 textureColor = shaderTexture.Sample(SampleType, input.texCoord0);
+    return textureColor;
 }

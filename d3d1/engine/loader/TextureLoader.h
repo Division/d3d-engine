@@ -6,10 +6,10 @@
 #define CPPWRAPPER_TEXTURELOADER_H
 
 #include <string>
-//#include "render/texture/Texture.h"
+#include "render/texture/Texture.h"
 
 namespace loader {
-  //TexturePtr loadTexture(const std::string &name, bool sRGB = true);
+  TexturePtr loadTexture(const std::string &name, bool sRGB = true);
 };
 
 

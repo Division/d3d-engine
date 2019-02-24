@@ -4,11 +4,11 @@
 
 #include "TextureLoader.h"
 #include "system/Logging.h"
-/*#include "EngImage.h"
+#include "EngineImage.h"
 
 TexturePtr loader::loadTexture(const std::string &name, bool sRGB) {
-  int w, h, channels;
-  auto data = stbi_load(name.c_str(), &w, &h, &channels, 0);
+  int32_t w, h, channels;
+  auto data = stbi_load(name.c_str(), &w, &h, &channels, 4);
 
   ENGLog("Loading texture %s", name.c_str());
   TexturePtr tex = std::make_shared<Texture>();
@@ -16,4 +16,4 @@ TexturePtr loader::loadTexture(const std::string &name, bool sRGB) {
   tex->initTexture2D(w, h, channels, sRGB, data);
 
   return tex;
-};*/
+};

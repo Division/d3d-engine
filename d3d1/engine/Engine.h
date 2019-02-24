@@ -8,9 +8,13 @@
 #include <string>
 #include "core/ID3DContextProvider.h"
 #include <IGame.h>
+#include "EngineTypes.h"
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
+
+class SceneRenderer;
+class Scene;
 
 class Engine : public ID3DContextProvider {
 public:
@@ -21,8 +25,9 @@ public:
 
 	ID3D11DeviceContext1 *getD3DContext() { return context;  };
 	ID3D11Device1 *getD3DDevice() { return dev;  };
-
+	
 	void render();
+	void renderScene(std::shared_ptr<Scene> scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D);
 
 private:
 	void _initDirectX();
@@ -30,13 +35,37 @@ private:
 
 private:
 	HWND hWnd;
-	IDXGISwapChain *swapchain;             // the pointer to the swap chain interface
-	ID3D11Device1 *dev;                     // the pointer to our Direct3D device interface
-	ID3D11DeviceContext1 *context;          // the pointer to our Direct3D device context
+	IDXGISwapChain *swapchain;
+	ID3D11Device1 *dev;
+	ID3D11DeviceContext1 *context;         
 	ID3D11RenderTargetView *backbuffer;
 	
-	ID3D11InputLayout *pLayout;            // the pointer to the input layout
+	ID3D11InputLayout *pLayout;            
+
+	std::unique_ptr<SceneRenderer> _sceneRenderer;
 
 	static Engine *_instance;
 	std::weak_ptr<IGame> _game;
+
+	bool _initialized = false;
+	LARGE_INTEGER _lastTime;
+	double _engineTime;
+	double _frequency = 0.0;
 };
+
+template <class T> void SafeRelease(T **ppT)
+{
+	if (*ppT)
+	{
+		(*ppT)->Release();
+		*ppT = NULL;
+	}
+}
+
+inline void ThrowIfFailed(HRESULT hr)
+{
+	if (FAILED(hr))
+	{
+		throw std::exception("Operation failed");
+	}
+}

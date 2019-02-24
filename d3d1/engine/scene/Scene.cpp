@@ -197,7 +197,7 @@ Scene::Visibility &Scene::_getVisibilityForCamera(const std::shared_ptr<ICameraP
 
   for (auto &object : _gameObjects) {
     auto layerVisible = (bool)(object->layer() & camera->cameraVisibilityMask());
-    if (!layerVisible || !object->isRenderable() || !_objectIsVisible(object, frustum)) { continue; }
+    //if (!layerVisible || !object->isRenderable() || !_objectIsVisible(object, frustum)) { continue; }
     visibility.objects.push_back(object);
   }
 

@@ -27,10 +27,9 @@ D3DBuffer::D3DBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3
 	initData.SysMemSlicePitch = 0;
 
 	auto device = _provider->getD3DDevice();
-	auto result = device->CreateBuffer(&bufferDesc, &initData, &_buffer);
+	auto result = device->CreateBuffer(&bufferDesc, data ? &initData : nullptr, &_buffer);
 	if (FAILED(result)) {
 		ENGLog("[ERROR] Can't create buffer");
-		_buffer = nullptr;
 	}
 }
 

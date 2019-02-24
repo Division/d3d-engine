@@ -61,6 +61,9 @@
     <Filter Include="engine\loader">
       <UniqueIdentifier>{7f2e4848-5c5c-41c3-b8d1-07a93dd59e4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\render\texture">
+      <UniqueIdentifier>{f2f3c0da-81e7-4550-915a-8406305d15ea}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -210,6 +213,21 @@
     <ClInclude Include="engine\objects\SkinnedMeshObject.h">
       <Filter>engine\objects</Filter>
     </ClInclude>
+    <ClInclude Include="engine\render\renderer\SceneRenderer.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\texture\SpriteSheet.h">
+      <Filter>engine\render\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\texture\TextureSlot.h">
+      <Filter>engine\render\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\texture\Texture.h">
+      <Filter>engine\render\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\EngineImage.h">
+      <Filter>engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -316,6 +334,18 @@
     </ClCompile>
     <ClCompile Include="engine\objects\SkinnedMeshObject.cpp">
       <Filter>engine\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\renderer\SceneRenderer.cpp">
+      <Filter>engine\render\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\texture\SpriteSheet.cpp">
+      <Filter>engine\render\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\texture\Texture.cpp">
+      <Filter>engine\render\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\EngineImage.cpp">
+      <Filter>engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
