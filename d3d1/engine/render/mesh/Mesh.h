@@ -9,6 +9,7 @@
 #include <vector>
 #include <memory>
 #include <d3d11_1.h>
+#include "VertexAttrib.h"
 
 class D3DMemoryBuffer;
 
@@ -24,6 +25,7 @@ public:
 
   std::shared_ptr<D3DMemoryBuffer> vertexBuffer() const { return _vertexBuffer; }
   std::shared_ptr<D3DMemoryBuffer> indexBuffer() const { return _indexBuffer; }
+  const VertexAttribSet vertexAttribSet() const { return _attribSet; }
 
   void setVertices(const vec3 *vertices, int vertexCount);
   void setVertices(const float *vertexComponents, int vertexCount);
@@ -105,9 +107,8 @@ private:
 
 private:
   AABB _aabb;
+  VertexAttribSet _attribSet;
 
-  //std::shared_ptr<VertexBufferObject> _vbo;
-  //std::shared_ptr<VertexBufferObject> _indexBuffer;
   std::shared_ptr<D3DMemoryBuffer> _vertexBuffer;
   std::shared_ptr<D3DMemoryBuffer> _indexBuffer;
 

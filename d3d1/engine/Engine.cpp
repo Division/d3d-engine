@@ -1,6 +1,6 @@
 
 #include "Engine.h"
-#include "render/Shader.h"
+#include "render/shader/Shader.h"
 #include "system/Logging.h"
 #include "render/buffer/D3DBuffer.h"
 #include "render/buffer/D3DMemoryBuffer.h"

@@ -52,9 +52,6 @@ typedef std::shared_ptr<Terrain> TerrainPtr;
 class SpriteSheet;
 typedef std::shared_ptr<SpriteSheet> SpriteSheetPtr;
 
-class ShaderCapsSet;
-typedef std::shared_ptr<ShaderCapsSet> ShaderCapsSetPtr;
-
 class SwappableFrameBufferObject;
 typedef std::shared_ptr<SwappableFrameBufferObject> SwappableFrameBufferObjectPtr;
 

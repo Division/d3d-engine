@@ -1,12 +1,12 @@
 struct VIn {
     float4 position : POSITION;
-    float2 texCoord0 : TEXCOORD0;
+    float2 texCoord0 : TEXCOORD;
 };
 
 struct VOut
 {
     float4 position : SV_POSITION;
-    float2 texCoord0 : TEXCOORD0;
+    float2 texCoord0 : TEXCOORD;
 };
 
 cbuffer VS_CONSTANT_BUFFER : register(b0)

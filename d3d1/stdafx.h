@@ -50,7 +50,9 @@ using namespace glm;
 #include <fstream>
 #include <algorithm>
 #include <set>
+#include <unordered_set>
 #include <map>
+#include <unordered_map>
 #include <list>
 #include <deque>
 #include <d3d11_1.h>

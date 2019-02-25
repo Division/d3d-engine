@@ -192,50 +192,61 @@ void Mesh::createBuffer() {
   _stride = _getStrideSize();
   _strideBytes = _stride * 4;
 
+  _attribSet = VertexAttribSet();
+
   int currentOffset = 0;
   if (_hasVertices) {
     _vertexOffset = currentOffset;
     _vertexOffsetBytes = currentOffset * 4;
     currentOffset += VERTEX_SIZE;
     _vertexCount = (int)floor(_vertices.size() / 3.0f);
+	_attribSet.addCap(VertexAttrib::Position);
   }
   if (_hasNormals) {
     _normalOffset = currentOffset;
     _normalOffsetBytes = currentOffset * 4;
     currentOffset += NORMAL_SIZE;
+	_attribSet.addCap(VertexAttrib::Normal);
   }
   if (_hasTBN) {
     _tangentOffset = currentOffset;
     _tangentOffsetBytes = currentOffset * 4;
     currentOffset += NORMAL_SIZE;
+	_attribSet.addCap(VertexAttrib::Tangent);
 
     _bitangentOffset = currentOffset;
     _bitangentOffsetBytes = currentOffset * 4;
     currentOffset += NORMAL_SIZE;
+	_attribSet.addCap(VertexAttrib::Bitangent);
   }
   if (_hasTexCoord0) {
     _texCoord0Offset = currentOffset;
     _texCoord0OffsetBytes = currentOffset * 4;
     currentOffset += TEXCOORD_SIZE;
+	_attribSet.addCap(VertexAttrib::TexCoord0);
   }
   if (_hasCorners) {
     _cornerOffset = currentOffset;
     _cornerOffsetBytes = currentOffset * 4;
     currentOffset += CORNER_SIZE;
+	_attribSet.addCap(VertexAttrib::Corner);
   }
   if (_hasWeights) {
     _weightOffset = currentOffset;
     _weightOffsetBytes = currentOffset * 4;
     currentOffset += WEIGHT_SIZE;
+	_attribSet.addCap(VertexAttrib::JointWeights);
 
     _jointIndexOffset = currentOffset;
     _jointIndexOffsetBytes = currentOffset * 4;
     currentOffset += JOINT_INDEX_SIZE;
+	_attribSet.addCap(VertexAttrib::JointIndices);
   }
   if (_hasColors) {
     _colorOffset = currentOffset;
     _colorOffsetBytes = currentOffset * 4;
     currentOffset += COLOR_SIZE;
+	_attribSet.addCap(VertexAttrib::VertexColor);
   }
 
   // Unsafe but fast filling buffer data by working with pointer directl

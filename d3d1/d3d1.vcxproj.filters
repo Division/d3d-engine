@@ -81,9 +81,6 @@
     <ClInclude Include="engine\Engine.h">
       <Filter>engine</Filter>
     </ClInclude>
-    <ClInclude Include="engine\render\Shader.h">
-      <Filter>engine\render</Filter>
-    </ClInclude>
     <ClInclude Include="engine\core\ID3DContextProvider.h">
       <Filter>engine\core</Filter>
     </ClInclude>
@@ -228,6 +225,24 @@
     <ClInclude Include="engine\EngineImage.h">
       <Filter>engine</Filter>
     </ClInclude>
+    <ClInclude Include="engine\render\shader\ShaderCaps.h">
+      <Filter>engine\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shader\ShaderGenerator.h">
+      <Filter>engine\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shader\Shader.h">
+      <Filter>engine\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\mesh\VertexAttrib.h">
+      <Filter>engine\render\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\utils\CapsSet.h">
+      <Filter>engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shader\ShaderResource.h">
+      <Filter>engine\render\shader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -238,9 +253,6 @@
     </ClCompile>
     <ClCompile Include="engine\Engine.cpp">
       <Filter>engine</Filter>
-    </ClCompile>
-    <ClCompile Include="engine\render\Shader.cpp">
-      <Filter>engine\render</Filter>
     </ClCompile>
     <ClCompile Include="engine\system\Input.cpp">
       <Filter>engine\system</Filter>
@@ -346,6 +358,15 @@
     </ClCompile>
     <ClCompile Include="engine\EngineImage.cpp">
       <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\shader\ShaderGenerator.cpp">
+      <Filter>engine\render\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\shader\Shader.cpp">
+      <Filter>engine\render\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\shader\ShaderResource.cpp">
+      <Filter>engine\render\shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

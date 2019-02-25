@@ -2,6 +2,9 @@
 
 #include <string>
 #include "core/IEngineResource.h"
+#include "render/mesh/VertexAttrib.h"
+#include "ShaderCaps.h"
+#include <vector>
 
 class ID3DContextProvider;
 
@@ -14,6 +17,7 @@ public:
 	~Shader();
 
 	void loadFromFile(const std::string &filename);
+	void loadFromString(const std::string &shaderSource, const std::string &filename, ShaderCapsSet caps);
 	void bind();
 	ID3D11InputLayout *createInputLayout(D3D11_INPUT_ELEMENT_DESC *inputDescription, int32_t count);
 
@@ -22,8 +26,16 @@ public:
 	bool isReady() const override { return _ready; };
 
 private:
+	void _initCaps(const ShaderCapsSet caps);
+	std::vector<D3D_SHADER_MACRO> _getDefinesForCaps(const ShaderCapsSet &caps);
+
+private:
+	VertexAttribSet _attribSet;
+	ShaderCapsSet _caps;
+
 	bool _error = false;
 	bool _ready = false;
+
 	ID3DContextProvider *_provider;
 	ID3D10Blob *_vsBlob;
 	ID3D10Blob *_psBlob;
