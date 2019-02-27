@@ -5,22 +5,17 @@
 #include "render/shader/ConstantBufferStruct.h"
 #include "render/buffer/D3DMemoryBuffer.h"
 #include "scene/GameObject.h"
+#include "ConstantBufferManager.h"
+#include "render/shader/ShaderGenerator.h"
+#include "InputLayoutCache.h"
 
 SceneRenderer::SceneRenderer() {
-	_objectParams = std::make_unique<D3DMemoryBuffer>(Engine::Get(), 
-		D3D11_BIND_CONSTANT_BUFFER, 
-		D3D11_USAGE_DYNAMIC, 
-		DXCaps::CONSTANT_BUFFER_MAX_SIZE
-	);
-	_cameraData = std::make_unique<D3DMemoryBuffer>(Engine::Get(),
-		D3D11_BIND_CONSTANT_BUFFER,
-		D3D11_USAGE_DYNAMIC,
-		DXCaps::CONSTANT_BUFFER_MAX_SIZE
-	);
+	_constantBufferManager = std::make_unique<ConstantBufferManager>();
+	_inputLayoutCache = std::make_unique<InputLayoutCache>();
+	//_inputLayoutCache = new InputLayoutCache();
 }
 
-void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D)
-{
+void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D) {
 	_clearQueues();
 
 	auto visibleObjects = scene->visibleObjects(camera);
@@ -28,19 +23,17 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 		object->render(*this);
 	}
 
+	_prepareShaders();
+
 	for (auto &queue : _queues) {
 		for (auto &rop : queue) {
 			if (rop.objectParams) {
-				auto address = _objectParams->appendData(
-					(void *)rop.objectParams, sizeof(ConstantBufferStruct::ObjectParams), DXCaps::CONSTANT_BUFFER_ALIGNMENT
-				);
-				rop.objectParamsBlockOffset.index = 0;
-				rop.objectParamsBlockOffset.offset = address;
+				_constantBufferManager->setObjectParamsBlock(&rop);
 			}
 		}
 	}
 
-	_objectParams->upload();
+	_constantBufferManager->upload();
 
 	for (auto &rop : _queues[(int)RenderQueue::Opaque]) {
 		_setupROP(rop);
@@ -53,9 +46,22 @@ void SceneRenderer::_clearQueues() {
 	}
 }
 
-void SceneRenderer::addRenderOperation(RenderOperation &rop, RenderQueue queue)
-{
+void SceneRenderer::_prepareShaders() {
+	auto engine = Engine::Get();
+	for (auto cap : Material::_uninitializedCaps) {
+		//engine->shaderGenerator()->getShaderWithCaps()
+	}
+}
+
+void SceneRenderer::addRenderOperation(RenderOperation &rop, RenderQueue queue) {
+	// TODO: CONCURRENCY
+
 	_queues[(int)queue].push_back(rop);
+	
+	// Using friend's private functions
+	if (rop.material && rop.material->_capsDirty) {
+		rop.material->_updateCaps();
+	}
 }
 
 void SceneRenderer::_setupROP(RenderOperation &rop) {

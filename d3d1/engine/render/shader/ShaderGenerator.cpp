@@ -7,7 +7,9 @@
 #include <unordered_map>
 #include <string>
 #include "loader/ShaderLoader.h"
+#include "Engine.h"
 #include "Shader.h"
+
 
 const std::string TEMPLATE_ROOT = "resources/shaders/";
 
@@ -54,15 +56,7 @@ const std::map<ShaderCaps, std::string> CAPS_TO_PARAM_MAP = {
 const auto ROOT_TEMPLATE = TEMPLATE_LIST[0];
 
 ShaderGenerator::ShaderGenerator() {
-  this->setupTemplates();
 
-  // Add non-root templates as callbacks so that
-  // they can be referenced as {{ template_name }}
-  for (auto &filename : TEMPLATE_LIST) {
-    if (filename != ROOT_TEMPLATE) {
-      _addTemplateCallback(filename);
-    }
-  }
 }
 
 void ShaderGenerator::_addTemplateCallback(std::string tplName) {
@@ -115,22 +109,15 @@ json ShaderGenerator::_getJSONForCaps(ShaderCapsSetPtr caps) const {
   return result;
 }
 
-ShaderPtr ShaderGenerator::getShaderWithCaps(std::shared_ptr<ShaderCapsSet> caps, const std::string &rootTemplate) const {
+ShaderPtr ShaderGenerator::getShaderWithCaps(ShaderCapsSet caps, const std::string &rootTemplate) const {
   ShaderPtr result;
 
   auto &shaderCache = _shaders[rootTemplate];
-  auto iterator = shaderCache.find(caps->getBitmask());
+  auto iterator = shaderCache.find(caps.getBitmask());
   if (iterator == shaderCache.end()) {
-    std::string shaderSource = this->generateShaderSource(caps, rootTemplate);
-    std::stringstream stream;
-    stream.str(shaderSource);
-    std::string vertexSource;
-    std::string fragmentSource;
-
-    loader::loadShader(stream, &vertexSource, &fragmentSource);
-    //result = std::make_shared<Shader>(vertexSource, fragmentSource);
-    shaderCache[caps->getBitmask()] = result;
-    //result->setupUniformsForCaps(caps);
+    result = std::make_shared<Shader>(Engine::Get());
+	result->loadFromFile(rootTemplate, std::move(caps));
+    shaderCache[caps.getBitmask()] = result;
   } else {
     result = iterator->second;
   }
@@ -138,6 +125,18 @@ ShaderPtr ShaderGenerator::getShaderWithCaps(std::shared_ptr<ShaderCapsSet> caps
   return result;
 }
 
+
+HRESULT ShaderGenerator::Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID * ppData, UINT * pBytes)
+{
+	return 0;
+}
+HRESULT ShaderGenerator::Close(LPCVOID pData)
+{
+	return 0;
+}
+
+/*
 ShaderPtr ShaderGenerator::getShaderWithCaps(std::shared_ptr<ShaderCapsSet> caps) const {
   return getShaderWithCaps(caps, ROOT_TEMPLATE);
 }
+*/

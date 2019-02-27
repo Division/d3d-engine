@@ -6,6 +6,8 @@
 #include <map>
 #include "ShaderResource.h"
 #include "render/mesh/VertexAttrib.h"
+#include "loader/FileLoader.h"
+#include "ShaderDefines.h"
 
 Shader::Shader(ID3DContextProvider *provider) : _provider(provider) {}
 
@@ -37,17 +39,7 @@ const std::map<ShaderCaps, ShaderConfig> SHADER_CAP_CONFIG = {
 	{ ShaderCaps::SpecularMap, { { SRN::SpecularMap }, {}, {} } },
 };
 
-const std::map<VertexAttrib, std::string> SHADER_ATTRIB_DEFINES = {
-  { VertexAttrib::Position, "aPosition" },
-  { VertexAttrib::Normal, "aNormal" },
-  { VertexAttrib::Tangent, "aTangent" },
-  { VertexAttrib::Bitangent, "aBitangent" },
-  { VertexAttrib::TexCoord0, "aTexCoord0" },
-  { VertexAttrib::Corner, "aCorner" },
-  { VertexAttrib::VertexColor, "aVertexColor" },
-  { VertexAttrib::JointWeights, "aJointWeights" },
-  { VertexAttrib::JointIndices, "aJointIndices" }
-};
+
 
 ID3D11InputLayout *Shader::createInputLayout(D3D11_INPUT_ELEMENT_DESC *inputDescription, int32_t count) {
 	//if (!_ready) { return nullptr; }
@@ -58,7 +50,7 @@ ID3D11InputLayout *Shader::createInputLayout(D3D11_INPUT_ELEMENT_DESC *inputDesc
 }
 
 void Shader::_initCaps(const ShaderCapsSet caps) {
-	_caps = caps;
+	_caps = std::move(caps);
 	_attribSet = VertexAttribSet();
 	for (auto cap : _caps.caps()) {
 		auto &config = SHADER_CAP_CONFIG.at((ShaderCaps)cap);
@@ -68,33 +60,51 @@ void Shader::_initCaps(const ShaderCapsSet caps) {
 	}
 }
 
-std::vector<D3D_SHADER_MACRO> Shader::_getDefinesForCaps(const ShaderCapsSet & caps) {
+std::vector<D3D_SHADER_MACRO> Shader::_getDefinesForCaps(const ShaderCapsSet &caps) {
 	std::vector<D3D_SHADER_MACRO> result;
 
 	for (auto attrib : _attribSet.caps()) {
 		result.push_back({ SHADER_ATTRIB_DEFINES.at((VertexAttrib)attrib).c_str(), "1" });
 	}
 
+	for (auto cap : caps.caps()) {
+		auto &config = SHADER_CAP_CONFIG.at((ShaderCaps)cap);
+		for (auto resource : config.resources) {
+			result.push_back({ SHADER_RESOURCE_DEFINES.at((ShaderResourceName)resource).c_str(), "1" });
+		}
+		for (auto constantBuffer : config.constantBuffers) {
+			result.push_back({ CONSTANT_BUFFER_DEFINES.at((ConstantBufferName)constantBuffer).c_str(), "1" });
+		}
+
+		result.push_back({ SHADER_CAPS_DEFINES.at((ShaderCaps)cap).c_str(), "1" });
+	}
+
+	result.push_back({ 0, 0 }); // null last element
+
 	return result;
 }
 
-void Shader::loadFromFile(const std::string &filename) {
+void Shader::loadFromFile(const std::string &filename, ShaderCapsSet caps) {
+	auto result = loader::loadFile(filename);
+	if (!result) {
+		ENGLog("Error loading file: %s", filename.c_str());
+		return;
+	}
 
+	loadFromString(result->data(), result->size(), filename, caps);
 }
 
-void Shader::loadFromString(const std::string &shaderSource, const std::string &filename, ShaderCapsSet caps) {
+void Shader::loadFromString(const char *shaderSource, size_t length, const std::string &filename, ShaderCapsSet caps) {
 	_initCaps(caps);
 
 	auto context = _provider->getD3DContext();
 	auto device = _provider->getD3DDevice();
-
-	//std::wstring stemp = std::wstring(shaderSource.begin(), shaderSource.end());
 	
 	ID3DBlob *errors1, *errors2;
 
 	auto defines = _getDefinesForCaps(caps);
-	auto result1 = D3DCompile(shaderSource.c_str(), shaderSource.length(), NULL, &defines[0], NULL, "VShader", "vs_4_0", 0, 0, &_vsBlob, &errors1);
-	auto result2 = D3DCompile(shaderSource.c_str(), shaderSource.length(), NULL, &defines[0], NULL, "PShader", "ps_4_0", 0, 0, &_psBlob, &errors2);
+	auto result1 = D3DCompile(shaderSource, length, NULL, &defines[0], NULL, "VShader", "vs_4_0", 0, 0, &_vsBlob, &errors1);
+	auto result2 = D3DCompile(shaderSource, length, NULL, &defines[0], NULL, "PShader", "ps_4_0", 0, 0, &_psBlob, &errors2);
 
 	_error = false;
 	if (FAILED(result1)) {

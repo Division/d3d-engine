@@ -25,7 +25,7 @@ public:
 
   std::shared_ptr<D3DMemoryBuffer> vertexBuffer() const { return _vertexBuffer; }
   std::shared_ptr<D3DMemoryBuffer> indexBuffer() const { return _indexBuffer; }
-  const VertexAttribSet vertexAttribSet() const { return _attribSet; }
+  const VertexAttribSet &vertexAttribSet() const { return _attribSet; }
 
   void setVertices(const vec3 *vertices, int vertexCount);
   void setVertices(const float *vertexComponents, int vertexCount);

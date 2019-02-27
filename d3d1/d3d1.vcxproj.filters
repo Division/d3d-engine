@@ -243,6 +243,18 @@
     <ClInclude Include="engine\render\shader\ShaderResource.h">
       <Filter>engine\render\shader</Filter>
     </ClInclude>
+    <ClInclude Include="engine\loader\FileLoader.h">
+      <Filter>engine\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shader\ShaderDefines.h">
+      <Filter>engine\render\shader</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\renderer\ConstantBufferManager.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\renderer\InputLayoutCache.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -367,6 +379,15 @@
     </ClCompile>
     <ClCompile Include="engine\render\shader\ShaderResource.cpp">
       <Filter>engine\render\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\loader\FileLoader.cpp">
+      <Filter>engine\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\shader\ShaderDefines.cpp">
+      <Filter>engine\render\shader</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\renderer\ConstantBufferManager.cpp">
+      <Filter>engine\render\renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

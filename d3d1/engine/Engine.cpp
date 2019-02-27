@@ -5,11 +5,13 @@
 #include "render/buffer/D3DBuffer.h"
 #include "render/buffer/D3DMemoryBuffer.h"
 #include "render/renderer/SceneRenderer.h"
+#include "render/shader/ShaderGenerator.h"
 #include "utils/MeshGeneration.h"
 #include "render/mesh/Mesh.h"
 #include "DXCaps.h"
 #include "loader/TextureLoader.h"
 #include "render/texture/Texture.h"
+#include "render/renderer/InputLayoutCache.h"
 
 std::shared_ptr<Shader> shader1;
 std::shared_ptr<D3DBuffer> buffer1;
@@ -38,8 +40,9 @@ Engine::Engine(HWND hWnd, std::weak_ptr<IGame> game) : hWnd(hWnd), _game(game) {
 	_frequency = double(li.QuadPart);
 
 	ENGLogSetOutputFile("log.txt");
-	_initDirectX();
 
+	_shaderGenerator = std::make_unique<ShaderGenerator>(); // before dx is ready
+	_initDirectX();
 	_sceneRenderer = std::make_unique<SceneRenderer>(); // after dx is ready
 
 	QueryPerformanceCounter(&_lastTime);
@@ -51,7 +54,7 @@ Engine::~Engine()
 	dev->Release();
 	backbuffer->Release();
 	context->Release();
-	pLayout->Release();
+	//pLayout->Release();
 }
 
 void Engine::_initDirectX()
@@ -121,9 +124,13 @@ void Engine::_initPipeline() {
 
 	buffer1 = std::make_shared<D3DBuffer>(this, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, sizeof(VERTEX) * 3, OurVertices);
 	
-	shader1 = std::make_shared<Shader>(this);
-	shader1->loadFromFile("shader.hlsl.txt");
+	//shader1 = std::make_shared<Shader>(this);
+	//shader1->loadFromFile("shader.hlsl.txt");
 
+	ShaderCapsSet caps;
+	caps.addCap(ShaderCaps::ObjectData);
+	caps.addCap(ShaderCaps::Texture0);
+	shader1 = shaderGenerator()->getShaderWithCaps(std::move(caps), "resources/shaders/root.hlsl");
 	constantBuffer1 = std::make_shared<D3DMemoryBuffer>(this, D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, DXCaps::CONSTANT_BUFFER_MAX_SIZE);
 
 	mesh = std::shared_ptr<Mesh>(new Mesh());
@@ -137,8 +144,8 @@ void Engine::_initPipeline() {
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, mesh->texCoordOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0},
 	};
 
-	pLayout = shader1->createInputLayout(ied, 2);
-	context->IASetInputLayout(pLayout);
+	//pLayout = shader1->createInputLayout(ied, 2);
+	//context->IASetInputLayout(pLayout);
 
 	texture1 = loader::loadTexture("resources/lama.png", false);
 }
@@ -169,6 +176,8 @@ void Engine::render() {
 	matrix = glm::rotate(matrix, rotationAngle, vec3(0, 0, 1));
 	matrix = glm::transpose(matrix);
 
+	shader1->bind();
+
 	// Shader data
 	ConstantBuffer constantData = { matrix };
 	constantBuffer1->appendData(&constantData, sizeof(ConstantBuffer), DXCaps::CONSTANT_BUFFER_ALIGNMENT);
@@ -183,6 +192,10 @@ void Engine::render() {
 		&firstConstant,
 		&constantCount
 	);
+
+	// Input layout
+	auto layout = _sceneRenderer->inputLayoutCache()->getLayout(mesh, shader1);
+	context->IASetInputLayout(layout);
 
 	// Texture
 	context->PSSetShaderResources(0, 1, texture1->resourcePointer());

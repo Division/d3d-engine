@@ -16,10 +16,13 @@ public:
 	Shader(ID3DContextProvider *provider);
 	~Shader();
 
-	void loadFromFile(const std::string &filename);
-	void loadFromString(const std::string &shaderSource, const std::string &filename, ShaderCapsSet caps);
+	void loadFromFile(const std::string &filename, ShaderCapsSet caps = ShaderCapsSet());
+	void loadFromString(const char *shaderSource, size_t length, const std::string &filename, ShaderCapsSet caps);
 	void bind();
 	ID3D11InputLayout *createInputLayout(D3D11_INPUT_ELEMENT_DESC *inputDescription, int32_t count);
+
+	const ShaderCapsSet &capsSet() const { return _caps; }
+	const VertexAttribSet &vertexAttribSet() const { return _attribSet; }
 
 	// IEngineResource
 	bool isLoading() const override { return false; };
@@ -41,5 +44,8 @@ private:
 	ID3D10Blob *_psBlob;
 	ID3D11VertexShader *_vs;               // the pointer to the vertex shader
 	ID3D11PixelShader *_ps;                // the pointer to the pixel shader
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> _inputLayout;
 };
 
+typedef std::shared_ptr<Shader> ShaderPtr;

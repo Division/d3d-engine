@@ -15,6 +15,7 @@
 
 class SceneRenderer;
 class Scene;
+class ShaderGenerator;
 
 class Engine : public ID3DContextProvider {
 public:
@@ -25,7 +26,8 @@ public:
 
 	ID3D11DeviceContext1 *getD3DContext() { return context;  };
 	ID3D11Device1 *getD3DDevice() { return dev;  };
-	
+	const ShaderGenerator *shaderGenerator() const { return _shaderGenerator.get(); }
+
 	void render();
 	void renderScene(std::shared_ptr<Scene> scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D);
 
@@ -43,6 +45,7 @@ private:
 	ID3D11InputLayout *pLayout;            
 
 	std::unique_ptr<SceneRenderer> _sceneRenderer;
+	std::unique_ptr<ShaderGenerator> _shaderGenerator;
 
 	static Engine *_instance;
 	std::weak_ptr<IGame> _game;

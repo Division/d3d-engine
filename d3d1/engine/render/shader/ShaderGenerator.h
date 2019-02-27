@@ -18,14 +18,18 @@ using json = nlohmann::json;
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 
-class ShaderGenerator {
+class ShaderGenerator : public ID3DInclude {
 public:
   ShaderGenerator();
   void setupTemplates();
   void addTemplate(const std::string &name);
   std::string generateShaderSource(ShaderCapsSetPtr caps, const std::string rootTemplate) const;
-  ShaderPtr getShaderWithCaps(std::shared_ptr<ShaderCapsSet> caps) const;
-  ShaderPtr getShaderWithCaps(std::shared_ptr<ShaderCapsSet> caps, const std::string &rootTemplate) const;
+  //ShaderPtr getShaderWithCaps(std::shared_ptr<ShaderCapsSet> caps) const;
+  ShaderPtr getShaderWithCaps(ShaderCapsSet caps, const std::string &rootTemplate) const;
+
+  // ID3DInclude
+  HRESULT Open(D3D_INCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes) override;
+  HRESULT Close(LPCVOID pData) override;
 
 private:
   mutable inja::Environment _env;

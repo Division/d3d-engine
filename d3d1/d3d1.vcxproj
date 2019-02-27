@@ -161,6 +161,7 @@
     <ClInclude Include="engine\EngineMath.h" />
     <ClInclude Include="engine\EngineTypes.h" />
     <ClInclude Include="engine\IGame.h" />
+    <ClInclude Include="engine\loader\FileLoader.h" />
     <ClInclude Include="engine\loader\HierarchyLoader.h" />
     <ClInclude Include="engine\loader\ModelLoader.h" />
     <ClInclude Include="engine\loader\ModelLoaderUtils.h" />
@@ -179,13 +180,16 @@
     <ClInclude Include="engine\render\material\Material.h" />
     <ClInclude Include="engine\render\mesh\Mesh.h" />
     <ClInclude Include="engine\render\mesh\VertexAttrib.h" />
+    <ClInclude Include="engine\render\renderer\ConstantBufferManager.h" />
     <ClInclude Include="engine\render\renderer\ICameraParamsProvider.h" />
+    <ClInclude Include="engine\render\renderer\InputLayoutCache.h" />
     <ClInclude Include="engine\render\renderer\IRenderer.h" />
     <ClInclude Include="engine\render\renderer\RenderOperation.h" />
     <ClInclude Include="engine\render\renderer\SceneRenderer.h" />
     <ClInclude Include="engine\render\shader\ConstantBufferStruct.h" />
     <ClInclude Include="engine\render\shader\Shader.h" />
     <ClInclude Include="engine\render\shader\ShaderCaps.h" />
+    <ClInclude Include="engine\render\shader\ShaderDefines.h" />
     <ClInclude Include="engine\render\shader\ShaderGenerator.h" />
     <ClInclude Include="engine\render\shader\ShaderResource.h" />
     <ClInclude Include="engine\render\shader\VertexInput.h" />
@@ -218,6 +222,7 @@
     <ClCompile Include="engine\Engine.cpp" />
     <ClCompile Include="engine\EngineImage.cpp" />
     <ClCompile Include="engine\EngineMath.cpp" />
+    <ClCompile Include="engine\loader\FileLoader.cpp" />
     <ClCompile Include="engine\loader\HierarchyLoader.cpp" />
     <ClCompile Include="engine\loader\ModelLoader.cpp" />
     <ClCompile Include="engine\loader\ModelLoaderUtils.cpp" />
@@ -234,8 +239,10 @@
     <ClCompile Include="engine\render\buffer\MemoryBuffer.cpp" />
     <ClCompile Include="engine\render\material\Material.cpp" />
     <ClCompile Include="engine\render\mesh\Mesh.cpp" />
+    <ClCompile Include="engine\render\renderer\ConstantBufferManager.cpp" />
     <ClCompile Include="engine\render\renderer\SceneRenderer.cpp" />
     <ClCompile Include="engine\render\shader\Shader.cpp" />
+    <ClCompile Include="engine\render\shader\ShaderDefines.cpp" />
     <ClCompile Include="engine\render\shader\ShaderGenerator.cpp" />
     <ClCompile Include="engine\render\shader\ShaderResource.cpp" />
     <ClCompile Include="engine\render\shader\VertexInput.cpp" />

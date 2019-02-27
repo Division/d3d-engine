@@ -7,6 +7,18 @@ class CapsSet {
 public:
 	typedef uint32_t Bitmask;
 
+	CapsSet() = default;
+	CapsSet(const CapsSet &other) = default;
+	CapsSet &operator=(const CapsSet &other) = default;
+
+	CapsSet(CapsSet &&other) {
+		_bitmask = other._bitmask;
+		_maskDirty = other._maskDirty;
+		_caps = std::move(other._caps);
+		other._bitmask = 0;
+		other._maskDirty = false;
+	}
+
 	inline const std::unordered_set<Bitmask> caps() const {
 		return _caps;
 	}
