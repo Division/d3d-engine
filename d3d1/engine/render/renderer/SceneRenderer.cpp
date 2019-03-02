@@ -8,15 +8,41 @@
 #include "ConstantBufferManager.h"
 #include "render/shader/ShaderGenerator.h"
 #include "InputLayoutCache.h"
+#include "render/material/Material.h"
+#include "render/shading/IShadowCaster.h"
+#include "objects/LightObject.h"
+#include "objects/Projector.h"
 
 SceneRenderer::SceneRenderer() {
 	_constantBufferManager = std::make_unique<ConstantBufferManager>();
 	_inputLayoutCache = std::make_unique<InputLayoutCache>();
-	//_inputLayoutCache = new InputLayoutCache();
 }
 
 void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D) {
+	if (!camera) { return; }
 	_clearQueues();
+
+	// Shadow casters
+	auto &visibleLights = scene->visibleLights(camera);
+	_shadowCasters.clear();
+	for (auto &light : visibleLights) {
+		if (light->castShadows()) {
+			_shadowCasters.push_back(std::static_pointer_cast<IShadowCaster>(light));
+		}
+	}
+
+	auto &visibleProjectors = scene->visibleProjectors(camera);
+	for (auto &projector : visibleProjectors) {
+		if (projector->castShadows()) {
+			_shadowCasters.push_back(std::static_pointer_cast<IShadowCaster>(projector));
+		}
+	}
+
+	_constantBufferManager->addCamera(std::static_pointer_cast<ICameraParamsProvider>(camera));
+
+	//_shadowMap->setupShadowCasters(_shadowCasters);
+	//_renderer->setupBuffers(scene, camera, camera2D);
+	//_shadowMap->renderShadowMaps(_shadowCasters, scene);
 
 	auto visibleObjects = scene->visibleObjects(camera);
 	for (auto &object : visibleObjects) {
@@ -34,6 +60,7 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 	}
 
 	_constantBufferManager->upload();
+	_constantBufferManager->activateCamera(camera->cameraIndex());
 
 	for (auto &rop : _queues[(int)RenderQueue::Opaque]) {
 		_setupROP(rop);
@@ -70,6 +97,19 @@ void SceneRenderer::_setupROP(RenderOperation &rop) {
 	UINT offset = 0;
 
 	context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	
+	_constantBufferManager->setObjectParams(rop.objectParamsBlockOffset);
+
+	auto &material = rop.material;
+	if (material->_capsDirty) {
+		material->_updateCaps();
+	}
+
+	auto shader = Engine::Get()->shaderGenerator()->getShaderWithCaps(material->shaderCaps());
+	auto layout = _inputLayoutCache->getLayout(rop.mesh, shader);
+	context->IASetInputLayout(layout);
+
+	shader->bind();
 
 	if (rop.mesh->hasVertices()) {
 		auto vertexBuffer = rop.mesh->vertexBuffer()->buffer();

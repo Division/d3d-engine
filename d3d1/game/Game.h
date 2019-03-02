@@ -13,4 +13,5 @@ private:
 	std::shared_ptr<Scene> _scene;
 	CameraPtr _camera;
 	MeshObjectPtr _obj1;
+	MeshObjectPtr _obj2;
 };

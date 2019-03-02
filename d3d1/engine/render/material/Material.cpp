@@ -39,6 +39,12 @@ void Material::vertexColorEnabled(bool vertexColorEnabled) {
 void Material::_updateCaps() {
 	if (!_capsDirty) { return; }
 
+	if (_hasObjectParams) {
+		_shaderCaps.addCap(ShaderCaps::ObjectData);
+	} else {
+		_shaderCaps.removeCap(ShaderCaps::ObjectData);
+	}
+
 	if (_hasTexture0) {
 		_shaderCaps.addCap(ShaderCaps::Texture0);
 	} else {
@@ -71,6 +77,8 @@ void Material::_updateCaps() {
 
 	_shaderCapsSkinning = _shaderCaps;
 	_shaderCapsSkinning.addCap(ShaderCaps::Skinning);
+
+	_capsDirty = false;
 }
 
 void Material::_capsInitialized() {

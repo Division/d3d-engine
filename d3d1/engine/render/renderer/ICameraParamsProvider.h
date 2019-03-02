@@ -22,7 +22,7 @@ public:
   virtual vec4 cameraViewport() const = 0;
   virtual const Frustum &frustum() const = 0;
   virtual unsigned int cameraIndex() const = 0; // index is an offset in the corresponding UBO
-  virtual void cameraIndex(unsigned int index) = 0;
+  virtual void cameraIndex(uint32_t index) = 0;
   virtual unsigned int cameraVisibilityMask() const = 0;
 
   // There vectors can be obtained from the view matrix but will keep it for now

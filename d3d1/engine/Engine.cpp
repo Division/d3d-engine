@@ -113,7 +113,7 @@ void Engine::_initDirectX()
 }
 
 void Engine::_initPipeline() {
-	
+	/*
 	// create a triangle using the VERTEX struct
 	VERTEX OurVertices[] =
 	{
@@ -126,7 +126,7 @@ void Engine::_initPipeline() {
 	
 	//shader1 = std::make_shared<Shader>(this);
 	//shader1->loadFromFile("shader.hlsl.txt");
-
+	
 	ShaderCapsSet caps;
 	caps.addCap(ShaderCaps::ObjectData);
 	caps.addCap(ShaderCaps::Texture0);
@@ -137,17 +137,10 @@ void Engine::_initPipeline() {
 	MeshGeneration::generateQuad(mesh, vec2(1, 1));
 	mesh->createBuffer();
 
-	// create the input layout object
-	D3D11_INPUT_ELEMENT_DESC ied[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, mesh->vertexOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, mesh->texCoordOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-
 	//pLayout = shader1->createInputLayout(ied, 2);
 	//context->IASetInputLayout(pLayout);
 
-	texture1 = loader::loadTexture("resources/lama.png", false);
+	texture1 = loader::loadTexture("resources/lama.png", false); */
 }
 
 void Engine::render() {
@@ -168,6 +161,7 @@ void Engine::render() {
 	_game.lock()->update(float(dt));
 	// do 3D rendering on the back buffer here
 
+	/*
 	// select which vertex buffer to display
 	UINT stride = mesh->strideBytes();
 	UINT offset = 0;
@@ -206,7 +200,7 @@ void Engine::render() {
 	context->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
 	context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	context->Draw(mesh->vertexCount(), 0);
-
+	*/
 	// switch the back buffer and the front buffer
 	swapchain->Present(0, 0);
 }

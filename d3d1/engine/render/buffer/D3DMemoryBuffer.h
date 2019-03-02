@@ -16,6 +16,7 @@ public:
 	D3DMemoryBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, int32_t fixedSize = 0);
 
 	void upload();
+	int32_t size() const;
 
 	ID3D11Buffer *buffer();
 

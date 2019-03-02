@@ -55,7 +55,7 @@ public:
   unsigned int cameraVisibilityMask() const override { return _visibilityMask; };
   const Frustum &frustum() const override { return _frustum; };
   unsigned int cameraIndex() const override { return _cameraIndex; }; // index is an offset in the corresponding UBO
-  void cameraIndex(unsigned int index) override { _cameraIndex = index; };
+  void cameraIndex(uint32_t index) override { _cameraIndex = index; };
 
 protected:
   unsigned int _visibilityMask = ~0u; // all visible by default

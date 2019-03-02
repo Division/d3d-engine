@@ -45,6 +45,11 @@ void D3DMemoryBuffer::upload() {
 	this->resize(0);
 }
 
+int32_t D3DMemoryBuffer::size() const
+{
+	return _buffer->size();
+}
+
 ID3D11Buffer * D3DMemoryBuffer::buffer()
 {
 	return _buffer->buffer();

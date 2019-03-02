@@ -109,7 +109,7 @@ json ShaderGenerator::_getJSONForCaps(ShaderCapsSetPtr caps) const {
   return result;
 }
 
-ShaderPtr ShaderGenerator::getShaderWithCaps(ShaderCapsSet caps, const std::string &rootTemplate) const {
+ShaderPtr ShaderGenerator::getShaderWithCaps(const ShaderCapsSet &caps, const std::string &rootTemplate) const {
   ShaderPtr result;
 
   auto &shaderCache = _shaders[rootTemplate];
@@ -135,8 +135,7 @@ HRESULT ShaderGenerator::Close(LPCVOID pData)
 	return 0;
 }
 
-/*
-ShaderPtr ShaderGenerator::getShaderWithCaps(std::shared_ptr<ShaderCapsSet> caps) const {
-  return getShaderWithCaps(caps, ROOT_TEMPLATE);
+
+ShaderPtr ShaderGenerator::getShaderWithCaps(const ShaderCapsSet &caps) const {
+  return getShaderWithCaps(caps, "resources/shaders/root.hlsl");
 }
-*/

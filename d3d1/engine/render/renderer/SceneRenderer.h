@@ -7,6 +7,7 @@
 class D3DMemoryBuffer;
 class ConstantBufferManager;
 class InputLayoutCache;
+class IShadowCaster;
 
 class SceneRenderer : public IRenderer {
 public:
@@ -29,5 +30,7 @@ private:
 	std::unique_ptr<InputLayoutCache> _inputLayoutCache;
 	//InputLayoutCache *_inputLayoutCache;
 	std::vector<RenderOperation> _queues[(int)RenderQueue::Count];
+
+	mutable std::vector<std::shared_ptr<IShadowCaster>> _shadowCasters;
 };
 

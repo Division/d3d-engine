@@ -43,7 +43,7 @@ public:
 private:
 	ID3D11InputLayout *_createLayout(const MeshPtr mesh, const ShaderPtr shader) const {
 		auto &shaderCaps = shader->capsSet();
-		auto &vertexAttribSet= shader->vertexAttribSet();
+		auto &vertexAttribSet = shader->vertexAttribSet();
 		InputLayout layout;
 
 		if (vertexAttribSet.hasCap(VertexAttrib::Position)) {
@@ -51,11 +51,28 @@ private:
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->vertexOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);
 		}
+		if (vertexAttribSet.hasCap(VertexAttrib::Normal)) {
+			layout.push_back(
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->normalOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			);
+		}
+		if (vertexAttribSet.hasCap(VertexAttrib::Bitangent)) {
+			layout.push_back(
+				{ "BINORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->bitangentOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			);
+		}
+		if (vertexAttribSet.hasCap(VertexAttrib::Tangent)) {
+			layout.push_back(
+				{ "TANGENT", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->tangentOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			);
+		}
 		if (vertexAttribSet.hasCap(VertexAttrib::TexCoord0)) {
 			layout.push_back(
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->texCoordOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);
 		}
+
+		
 
 		return shader->createInputLayout(&layout[0], layout.size());
 	}

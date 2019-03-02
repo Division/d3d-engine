@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-enum class ShaderResourceName : int {
+enum class ShaderResourceName : uint32_t {
 	Texture0,
 	Texture1,
 	NormalMap,
@@ -11,13 +11,12 @@ enum class ShaderResourceName : int {
 	LightIndices
 };
 
-enum class ConstantBufferName : int {
+enum class ConstantBufferName : uint32_t {
 	ObjectParams,
+	Camera,
 	SkinningMatrices,
 	Light,
-	Camera,
 	Projector
 };
 
-extern const std::map<ShaderResourceName, unsigned int> SHADER_SAMPLER_REGISTERS;
-extern const std::map<ConstantBufferName, unsigned int> CONSTANT_BUFFER_REGISTERS;
+extern const std::map<ShaderResourceName, uint32_t> SHADER_SAMPLER_REGISTERS;

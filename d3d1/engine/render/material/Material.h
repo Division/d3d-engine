@@ -34,9 +34,11 @@ protected:
 	static std::unordered_set<ShaderCapsSet::Bitmask> _capsVariations;
 	static std::vector<ShaderCapsSet::Bitmask> _uninitializedCaps;
 
-	bool _capsDirty = false;
+	bool _capsDirty = true;
 	ShaderCapsSet _shaderCaps;
 	ShaderCapsSet _shaderCapsSkinning;
+
+	bool _hasObjectParams = true;
 
 	bool _hasTexture0 = false;
 	TexturePtr _texture0;
