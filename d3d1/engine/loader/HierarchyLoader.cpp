@@ -4,9 +4,10 @@
 
 #include "HierarchyLoader.h"
 #include <system/Logging.h>
+//#include "objects/SkinnedMeshObject.h"
 
 GameObjectPtr
-loader::loadHierarchy(ModelBundlePtr bundle, const HierarchyDataPtr hierarchyToLoad, const MaterialPicker *materialPicker) {
+loader::loadHierarchy(ModelBundlePtr bundle, const HierarchyDataPtr hierarchyToLoad) {
   auto hierarchy = hierarchyToLoad;
   if (!hierarchy && bundle) {
     hierarchy = bundle->hierarchy();
@@ -19,12 +20,12 @@ loader::loadHierarchy(ModelBundlePtr bundle, const HierarchyDataPtr hierarchyToL
     meshObject->mesh(bundle->getMesh(hierarchy->geometry));
     object = meshObject;
 
-    if (materialPicker) {
+    //if (materialPicker) {
       //meshObject->material(materialPicker->getMaterial(hierarchy));
-    } else {
-      MaterialPicker picker;
+    //} else {
+      //MaterialPicker picker;
       //meshObject->material(picker.getMaterial(hierarchy));
-    };
+    //};
   } else {
     object = CreateGameObject<GameObject>();
   }
@@ -43,26 +44,14 @@ loader::loadHierarchy(ModelBundlePtr bundle, const HierarchyDataPtr hierarchyToL
 //  ENGLog("Added object with name %s", object->name().c_str());
 
   for (auto &childHierarchy : hierarchy->children) {
-    auto child = loadHierarchy(bundle, childHierarchy, materialPicker);
+    auto child = loadHierarchy(bundle, childHierarchy);
     child->transform()->parent(object->transform());
   }
 
-  return object;
+  return object; 
 }
 
 
 SkinnedMeshObjectPtr loadSkinnedMesh(ModelBundlePtr bundle, SkinningDataPtr skinningData = nullptr) {
   return loader::loadSkinnedMesh<SkinnedMeshObject>(bundle, skinningData);
-}
-
-MaterialPtr loader::MaterialPicker::getMaterial(const HierarchyDataPtr hierarchy) const {
-  return _defaultMaterial;
-}
-
-loader::MaterialPicker::MaterialPicker() {
-  //_defaultMaterial = std::make_shared<MaterialLighting>();
-}
-
-loader::MaterialPicker::MaterialPicker(MaterialPtr material) {
- // _defaultMaterial = material;
 }

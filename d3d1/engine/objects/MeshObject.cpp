@@ -3,11 +3,12 @@
 //
 
 #include "MeshObject.h"
-//#include <render/material/Material.h>
+#include "render/material/Material.h"
 
 MeshObject::MeshObject() : GameObject() {
   _isRenderable = true;
   _cullingData.type = CullingData::Type::OBB;
+  _material = std::make_shared<Material>();
 }
 
 void MeshObject::render(IRenderer &renderer) {

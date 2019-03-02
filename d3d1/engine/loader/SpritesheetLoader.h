@@ -11,7 +11,7 @@
 
 namespace loader {
 
-  //std::shared_ptr<SpriteSheet> loadSpritesheet(const std::string &filename);
+  std::shared_ptr<SpriteSheet> loadSpritesheet(const std::string &filename);
 
 }
 

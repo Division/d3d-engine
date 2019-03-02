@@ -2,7 +2,6 @@
 // Created by Sidorenko Nikita on 7/14/18.
 //
 
-/*
 #include "SpritesheetLoader.h"
 #include <fstream>
 #include <sstream>
@@ -19,4 +18,3 @@ std::shared_ptr<SpriteSheet> loader::loadSpritesheet(const std::string &filename
   spritesheet->loadFromJSON(jsonData);
   return spritesheet;
 }
-*/

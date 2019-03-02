@@ -8,6 +8,7 @@
 #include "MeshObject.h"
 #include "render/shader/ConstantBufferStruct.h"
 #include "resources/SkinningData.h"
+#include "EngineTypes.h"
 #include <unordered_map>
 #include <string>
 #include <vector>

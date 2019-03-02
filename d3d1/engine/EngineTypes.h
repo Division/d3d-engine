@@ -61,5 +61,11 @@ typedef std::shared_ptr<FrameBufferObject> FrameBufferObjectPtr;
 class ICameraParamsProvider;
 typedef std::shared_ptr<ICameraParamsProvider> ICameraParamsProviderPtr;
 
+struct HierarchyData;
+typedef std::shared_ptr<HierarchyData> HierarchyDataPtr;
+
+class GameObject;
+typedef std::shared_ptr<GameObject> GameObjectPtr;
+
 #endif //CPPWRAPPER_ENGTYPES_H
 

@@ -53,9 +53,11 @@ float4 PShader(VOut input) : SV_TARGET
 
 #if defined(RESOURCE_TEXTURE0)
     float4 textureColor = shaderTexture.Sample(SampleType, input.texCoord0);
-    textureColor *= float4(3, 1, 1, 1);
+    //textureColor *= float4(3, 1, 1, 1);
     result = textureColor;
 #endif
 
+    float gamma = 2.2;
+    result.rgb = pow(result.rgb, 1.0/gamma);
     return result;
 }

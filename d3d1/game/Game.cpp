@@ -4,12 +4,24 @@
 #include "utils/MeshGeneration.h"
 #include "render/material/Material.h"
 #include "objects/FollowCamera.h"
+#include "level/Level.h"
+#include "loader/SpritesheetLoader.h"
+#include "loader/TextureLoader.h"
+#include "render/texture/SpriteSheet.h"
 
 float angle = 0;
 
 void Game::init() {
 	_scene = std::make_shared<Scene>();
 	_camera = CreateGameObject<FollowCamera>();
+
+	_spritesheet = loader::loadSpritesheet("resources/common/decals.json");
+	auto decals = loader::loadTexture("resources/common/" + _spritesheet->spritesheetName());
+	//engine->projectorTexture(decals);
+
+	_level = std::make_shared<Level>(_scene, _spritesheet, decals);
+	_level->load("resources/level/level1.mdl");
+
 	//_camera->setPlayer(_player);
 	_obj1 = CreateGameObject<MeshObject>();
 	_obj2 = CreateGameObject<MeshObject>();

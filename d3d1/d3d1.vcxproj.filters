@@ -67,6 +67,9 @@
     <Filter Include="game\objects">
       <UniqueIdentifier>{bcdc4545-5f05-46bc-aea9-443d8133127c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game\level">
+      <UniqueIdentifier>{f9f671a8-72b8-4fa1-a247-e3a8d2976b1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -264,6 +267,15 @@
     <ClInclude Include="game\objects\FollowCamera.h">
       <Filter>game\objects</Filter>
     </ClInclude>
+    <ClInclude Include="game\level\Level.h">
+      <Filter>game\level</Filter>
+    </ClInclude>
+    <ClInclude Include="game\objects\StainGlass.h">
+      <Filter>game\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="game\objects\Sprite.h">
+      <Filter>game\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -402,6 +414,15 @@
       <Filter>engine\system</Filter>
     </ClCompile>
     <ClCompile Include="game\objects\FollowCamera.cpp">
+      <Filter>game\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="game\level\Level.cpp">
+      <Filter>game\level</Filter>
+    </ClCompile>
+    <ClCompile Include="game\objects\StainGlass.cpp">
+      <Filter>game\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="game\objects\Sprite.cpp">
       <Filter>game\objects</Filter>
     </ClCompile>
   </ItemGroup>

@@ -5,26 +5,31 @@
 #include "SkinnedMeshObject.h"
 #include "loader/HierarchyLoader.h"
 #include <iostream>
+#include "resources/ModelBundle.h"
+#include "scene/GameObject.h"
 
 void SkinnedMeshObject::setSkinningData(ModelBundlePtr bundle, SkinningDataPtr skinningData) {
   if (_rootJoint) {
     DestroyGameObject(_rootJoint);
     _rootJoint = nullptr;
-  }
+  } 
 
   _skinningData = skinningData;
 
   _jointList.clear();
   _jointMap.clear();
-
+  
   if (_skinningData) {
+	  
     _rootJoint = loader::loadHierarchy(bundle, _skinningData->joints);
     _rootJoint->transform()->parent(transform());
 
+	
     if (_rootJoint->animation()->hasAnimation()) {
       _animation = _rootJoint->animation();
     }
 
+	
     auto processJoint = [&](TransformPtr transform) {
       if (!_animation->hasAnimation() && transform->gameObject()->animation()->hasAnimation()) {
         _animation = transform->gameObject()->animation();
@@ -57,7 +62,7 @@ void SkinnedMeshObject::start() {
 }
 
 void SkinnedMeshObject::_debugDraw() {
-  for (int i = 0; i < _mesh->vertexCount(); i++) {
+ /* for (int i = 0; i < _mesh->vertexCount(); i++) {
     vec3 vertex = _mesh->getVertex(i);
     vec4 weight = _mesh->getWeights(i);
     vec4 jointIndices = _mesh->getJointIndices(i);
@@ -73,7 +78,7 @@ void SkinnedMeshObject::_debugDraw() {
   transform()->forEachChild(true, [&](TransformPtr transform) {
     if (transform->parent()->gameObject()->id() == this->id()) { return; }
     //getEngine()->debugDraw()->drawLine(transform->worldPosition(), transform->parent()->worldPosition(), vec4(1, 0, 0, 1));
-  });
+  }); */
 };
 
 void SkinnedMeshObject::postUpdate() {

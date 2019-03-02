@@ -6,26 +6,17 @@
 #define CPPWRAPPER_HIERARCHYLOADER_H
 
 #include "resources/ModelBundle.h"
+#include "resources/HierarchyData.h"
 #include "objects/MeshObject.h"
-#include "objects/SkinnedMeshObject.h"
 //#include <render/material/MaterialTypes.h>
 #include "EngineTypes.h"
 #include <memory>
+#include "resources/SkinningData.h"
+#include "objects/SkinnedMeshObject.h"
 
 namespace loader {
 
-  class MaterialPicker {
-  public:
-    MaterialPicker();
-    explicit MaterialPicker(MaterialPtr material);
-    virtual MaterialPtr getMaterial(const HierarchyDataPtr hierarchy) const;
-
-  protected:
-    MaterialPtr _defaultMaterial;
-  };
-
-  GameObjectPtr loadHierarchy(ModelBundlePtr bundle, const HierarchyDataPtr hierarchyToLoad,
-                              const MaterialPicker *materialPicker = nullptr);
+  GameObjectPtr loadHierarchy(ModelBundlePtr bundle, const HierarchyDataPtr hierarchyToLoad);
 
   template <typename T>
   std::shared_ptr<T> loadSkinnedMesh(ModelBundlePtr bundle, const SkinningDataPtr skinningData = nullptr) {

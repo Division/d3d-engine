@@ -213,7 +213,10 @@
     <ClInclude Include="engine\utils\Math.h" />
     <ClInclude Include="engine\utils\MeshGeneration.h" />
     <ClInclude Include="game\Game.h" />
+    <ClInclude Include="game\level\Level.h" />
     <ClInclude Include="game\objects\FollowCamera.h" />
+    <ClInclude Include="game\objects\Sprite.h" />
+    <ClInclude Include="game\objects\StainGlass.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -263,7 +266,10 @@
     <ClCompile Include="engine\utils\Math.cpp" />
     <ClCompile Include="engine\utils\MeshGeneration.cpp" />
     <ClCompile Include="game\Game.cpp" />
+    <ClCompile Include="game\level\Level.cpp" />
     <ClCompile Include="game\objects\FollowCamera.cpp" />
+    <ClCompile Include="game\objects\Sprite.cpp" />
+    <ClCompile Include="game\objects\StainGlass.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

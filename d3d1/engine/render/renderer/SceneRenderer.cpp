@@ -12,6 +12,7 @@
 #include "render/shading/IShadowCaster.h"
 #include "objects/LightObject.h"
 #include "objects/Projector.h"
+#include "render/texture/Texture.h"
 
 SceneRenderer::SceneRenderer() {
 	_constantBufferManager = std::make_unique<ConstantBufferManager>();
@@ -105,6 +106,12 @@ void SceneRenderer::_setupROP(RenderOperation &rop) {
 		material->_updateCaps();
 	}
 
+	auto texture0 = material->texture0();
+	if (texture0) {
+		context->PSSetShaderResources(0, 1, texture0->resourcePointer());
+		context->PSSetSamplers(0, 1, texture0->samplerStatePointer());
+	}
+
 	auto shader = Engine::Get()->shaderGenerator()->getShaderWithCaps(material->shaderCaps());
 	auto layout = _inputLayoutCache->getLayout(rop.mesh, shader);
 	context->IASetInputLayout(layout);
@@ -124,7 +131,6 @@ void SceneRenderer::_setupROP(RenderOperation &rop) {
 	else {
 		context->Draw(rop.mesh->indexCount(), 0);
 	}
-
 }
 
 void SceneRenderer::renderMesh(MeshPtr mesh) {
