@@ -3,6 +3,8 @@
 
 #include "EngineTypes.h"
 
+class FollowCamera;
+
 class Game : public IGame {
 public:
 	~Game() = default;
@@ -11,7 +13,7 @@ public:
 
 private:
 	std::shared_ptr<Scene> _scene;
-	CameraPtr _camera;
+	std::shared_ptr<FollowCamera> _camera;
 	MeshObjectPtr _obj1;
 	MeshObjectPtr _obj2;
 };

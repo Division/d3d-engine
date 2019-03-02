@@ -16,22 +16,28 @@
 class SceneRenderer;
 class Scene;
 class ShaderGenerator;
+class Window;
+class Input;
 
 class Engine : public ID3DContextProvider {
 public:
-	Engine(HWND hWnd, std::weak_ptr<IGame> game);
+	Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_ptr<IGame> game);
 	~Engine();
 
 	static Engine *Get() { return _instance; }
 
+	void startLoop();
+
 	ID3D11DeviceContext1 *getD3DContext() { return context;  };
 	ID3D11Device1 *getD3DDevice() { return dev;  };
 	const ShaderGenerator *shaderGenerator() const { return _shaderGenerator.get(); }
+	const Input *input() const { return _input.get(); }
 
 	void render();
 	void renderScene(std::shared_ptr<Scene> scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D);
 
 private:
+	void _mainLoop();
 	void _initDirectX();
 	void _initPipeline();
 
@@ -44,6 +50,8 @@ private:
 	
 	ID3D11InputLayout *pLayout;            
 
+	std::unique_ptr<Input> _input;
+	std::unique_ptr<Window> _window;
 	std::unique_ptr<SceneRenderer> _sceneRenderer;
 	std::unique_ptr<ShaderGenerator> _shaderGenerator;
 

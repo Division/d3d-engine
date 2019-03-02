@@ -3,12 +3,14 @@
 #include "objects/MeshObject.h"
 #include "utils/MeshGeneration.h"
 #include "render/material/Material.h"
+#include "objects/FollowCamera.h"
 
 float angle = 0;
 
 void Game::init() {
 	_scene = std::make_shared<Scene>();
-	_camera = CreateGameObject<Camera>();
+	_camera = CreateGameObject<FollowCamera>();
+	//_camera->setPlayer(_player);
 	_obj1 = CreateGameObject<MeshObject>();
 	_obj2 = CreateGameObject<MeshObject>();
 	
@@ -26,7 +28,7 @@ void Game::init() {
 	_obj2->transform()->position(vec3(0.3, 0, 0));
 	_obj2->transform()->scale(vec3(0.6, 0.6, 0.6));
 
-	_camera->transform()->position(vec3(0, 3, -10));
+	_camera->transform()->position(vec3(0, 0, -10));
 }
 
 void Game::update(float dt) {

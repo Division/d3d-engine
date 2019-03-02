@@ -64,6 +64,9 @@
     <Filter Include="engine\render\texture">
       <UniqueIdentifier>{f2f3c0da-81e7-4550-915a-8406305d15ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="game\objects">
+      <UniqueIdentifier>{bcdc4545-5f05-46bc-aea9-443d8133127c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -255,6 +258,12 @@
     <ClInclude Include="engine\render\renderer\InputLayoutCache.h">
       <Filter>engine\render\renderer</Filter>
     </ClInclude>
+    <ClInclude Include="engine\system\Window.h">
+      <Filter>engine\system</Filter>
+    </ClInclude>
+    <ClInclude Include="game\objects\FollowCamera.h">
+      <Filter>game\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -388,6 +397,12 @@
     </ClCompile>
     <ClCompile Include="engine\render\renderer\ConstantBufferManager.cpp">
       <Filter>engine\render\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\system\Window.cpp">
+      <Filter>engine\system</Filter>
+    </ClCompile>
+    <ClCompile Include="game\objects\FollowCamera.cpp">
+      <Filter>game\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

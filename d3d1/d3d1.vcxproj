@@ -207,11 +207,13 @@
     <ClInclude Include="engine\system\Input.h" />
     <ClInclude Include="engine\system\Logging.h" />
     <ClInclude Include="engine\system\utils.h" />
+    <ClInclude Include="engine\system\Window.h" />
     <ClInclude Include="engine\utils\CapsSet.h" />
     <ClInclude Include="engine\utils\Frustum.h" />
     <ClInclude Include="engine\utils\Math.h" />
     <ClInclude Include="engine\utils\MeshGeneration.h" />
     <ClInclude Include="game\Game.h" />
+    <ClInclude Include="game\objects\FollowCamera.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -257,9 +259,11 @@
     <ClCompile Include="engine\scene\Transform.cpp" />
     <ClCompile Include="engine\system\Input.cpp" />
     <ClCompile Include="engine\system\Logging.cpp" />
+    <ClCompile Include="engine\system\Window.cpp" />
     <ClCompile Include="engine\utils\Math.cpp" />
     <ClCompile Include="engine\utils\MeshGeneration.cpp" />
     <ClCompile Include="game\Game.cpp" />
+    <ClCompile Include="game\objects\FollowCamera.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

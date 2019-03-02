@@ -12,36 +12,26 @@
 #include "loader/TextureLoader.h"
 #include "render/texture/Texture.h"
 #include "render/renderer/InputLayoutCache.h"
+#include "system/Window.h"
+#include "system/Input.h"
 
-std::shared_ptr<Shader> shader1;
-std::shared_ptr<D3DBuffer> buffer1;
-std::shared_ptr<D3DMemoryBuffer> constantBuffer1;
-std::shared_ptr<Mesh> mesh;
-std::shared_ptr<Texture> texture1;
-
-float rotationAngle = 0;
 Engine *Engine::_instance = nullptr;
 
-struct ConstantBuffer {
-	mat4 modelMatrix;
-	//mat4 projectionMatrix;
-};
-
-struct VERTEX {
-	FLOAT X, Y, Z;
-	FLOAT Color[4];
-};
-
-Engine::Engine(HWND hWnd, std::weak_ptr<IGame> game) : hWnd(hWnd), _game(game) {
+Engine::Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_ptr<IGame> game) : _game(game) {
 	_instance = this;
-
+		
 	LARGE_INTEGER li;
 	QueryPerformanceFrequency(&li);
 	_frequency = double(li.QuadPart);
 
 	ENGLogSetOutputFile("log.txt");
 
+	_input = std::make_unique<Input>();
+	_window = std::make_unique<Window>(_input.get());
+
 	_shaderGenerator = std::make_unique<ShaderGenerator>(); // before dx is ready
+	hWnd = _window->initWindow(width, height, hInstance);
+
 	_initDirectX();
 	_sceneRenderer = std::make_unique<SceneRenderer>(); // after dx is ready
 
@@ -54,7 +44,6 @@ Engine::~Engine()
 	dev->Release();
 	backbuffer->Release();
 	context->Release();
-	//pLayout->Release();
 }
 
 void Engine::_initDirectX()
@@ -98,49 +87,23 @@ void Engine::_initDirectX()
 	// set the render target as the back buffer
 	context->OMSetRenderTargets(1, &backbuffer, NULL);
 
-	// Set the viewport
-	D3D11_VIEWPORT viewport;
-	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
-
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.Width = 800;
-	viewport.Height = 600;
-
-	context->RSSetViewports(1, &viewport);
-
 	_initPipeline();
 }
 
+void Engine::startLoop() {
+	while (!_window->quitTriggered()) {
+		_window->processMessages();
+		render();
+	}
+}
+
+void Engine::_mainLoop() {
+	
+}
+
+
 void Engine::_initPipeline() {
-	/*
-	// create a triangle using the VERTEX struct
-	VERTEX OurVertices[] =
-	{
-		{0.0f, 0.5f, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f}},
-		{0.45f, -0.5, 0.0f, {0.0f, 1.0f, 0.0f, 1.0f}},
-		{-0.45f, -0.5f, 0.0f, {0.0f, 0.0f, 1.0f, 1.0f}}
-	};
 
-	buffer1 = std::make_shared<D3DBuffer>(this, D3D11_BIND_VERTEX_BUFFER, D3D11_USAGE_DYNAMIC, sizeof(VERTEX) * 3, OurVertices);
-	
-	//shader1 = std::make_shared<Shader>(this);
-	//shader1->loadFromFile("shader.hlsl.txt");
-	
-	ShaderCapsSet caps;
-	caps.addCap(ShaderCaps::ObjectData);
-	caps.addCap(ShaderCaps::Texture0);
-	shader1 = shaderGenerator()->getShaderWithCaps(std::move(caps), "resources/shaders/root.hlsl");
-	constantBuffer1 = std::make_shared<D3DMemoryBuffer>(this, D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, DXCaps::CONSTANT_BUFFER_MAX_SIZE);
-
-	mesh = std::shared_ptr<Mesh>(new Mesh());
-	MeshGeneration::generateQuad(mesh, vec2(1, 1));
-	mesh->createBuffer();
-
-	//pLayout = shader1->createInputLayout(ied, 2);
-	//context->IASetInputLayout(pLayout);
-
-	texture1 = loader::loadTexture("resources/lama.png", false); */
 }
 
 void Engine::render() {
@@ -158,50 +121,19 @@ void Engine::render() {
 	// clear the back buffer to a deep blue
 	context->ClearRenderTargetView(backbuffer, color);
 
+	// Set the viewport
+	D3D11_VIEWPORT viewport;
+	ZeroMemory(&viewport, sizeof(D3D11_VIEWPORT));
+
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
+	viewport.Width = _window->width();
+	viewport.Height = _window->height();
+
+	context->RSSetViewports(1, &viewport);
+
 	_game.lock()->update(float(dt));
-	// do 3D rendering on the back buffer here
 
-	/*
-	// select which vertex buffer to display
-	UINT stride = mesh->strideBytes();
-	UINT offset = 0;
-	rotationAngle += dt * M_PI * 2;
-	mat4 matrix;
-	matrix = glm::rotate(matrix, rotationAngle, vec3(0, 0, 1));
-	matrix = glm::transpose(matrix);
-
-	shader1->bind();
-
-	// Shader data
-	ConstantBuffer constantData = { matrix };
-	constantBuffer1->appendData(&constantData, sizeof(ConstantBuffer), DXCaps::CONSTANT_BUFFER_ALIGNMENT);
-	constantBuffer1->upload();
-	auto constantBuffer = constantBuffer1->buffer();
-	UINT firstConstant = 0;
-	UINT constantCount = max((int)ceilf((float)sizeof(ConstantBuffer) / DXCaps::CONSTANT_BUFFER_CONSTANT_SIZE), DXCaps::CONSTANT_BUFFER_ALIGNMENT / DXCaps::CONSTANT_BUFFER_CONSTANT_SIZE);
-	context->VSSetConstantBuffers1(
-		0,
-		1,
-		&constantBuffer,
-		&firstConstant,
-		&constantCount
-	);
-
-	// Input layout
-	auto layout = _sceneRenderer->inputLayoutCache()->getLayout(mesh, shader1);
-	context->IASetInputLayout(layout);
-
-	// Texture
-	context->PSSetShaderResources(0, 1, texture1->resourcePointer());
-	context->PSSetSamplers(0, 1, texture1->samplerStatePointer());
-
-	// Buffers
-	const auto buffer = mesh->vertexBuffer()->buffer();
-	context->IASetVertexBuffers(0, 1, &buffer, &stride, &offset);
-	context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	context->Draw(mesh->vertexCount(), 0);
-	*/
-	// switch the back buffer and the front buffer
 	swapchain->Present(0, 0);
 }
 

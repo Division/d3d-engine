@@ -93,7 +93,7 @@ const vec3 Transform::down() const {
 
 const vec3 Transform::backward() const {
   _updateTransformUpwards();
-  return vec3(_worldMatrix[2]);
+  return vec3(-_worldMatrix[2]);
 }
 
 void Transform::setMatrix(const mat4 &matrix) {
