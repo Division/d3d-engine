@@ -48,7 +48,8 @@ private:
 	ID3D11DeviceContext1 *context;         
 	ID3D11RenderTargetView *backbuffer;
 	ID3D11DepthStencilView *depthStencil;
-	
+	ID3D11DepthStencilState *dsState;
+
 	ID3D11InputLayout *pLayout;            
 
 	std::unique_ptr<Input> _input;
