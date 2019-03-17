@@ -3,10 +3,11 @@
 #include "system/Logging.h"
 #include "core/ID3DContextProvider.h"
 #include "D3DBuffer.h"
+#include "utils/Math.h"
 
 const int ALIGN_BYTES = 4;
 
-D3DMemoryBuffer::D3DMemoryBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, int32_t fixedSize)
+D3DMemoryBuffer::D3DMemoryBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, uint32_t fixedSize)
 	: _provider(provider), _bindFlag(bindFlag), _usage(usage), _fixedSize(fixedSize) {
 	_recreateBuffer();
 }
@@ -16,7 +17,7 @@ void D3DMemoryBuffer::_recreateBuffer() {
 
 	if (_fixedSize > 0) {
 		targetSize = _fixedSize;
-		if ((int32_t)_size > _fixedSize) {
+		if ((uint32_t)_size > _fixedSize) {
 			throw std::runtime_error("D3DBuffer fixedSize exceeded");
 		}
 	}
@@ -24,7 +25,7 @@ void D3DMemoryBuffer::_recreateBuffer() {
 		return;
 	}
 
-	_bufferAllocatedSize = (unsigned)targetSize;
+	_bufferAllocatedSize = (uint32_t)getPowerOfTwo((int32_t)targetSize);
 	_buffer = std::make_shared<D3DBuffer>(_provider, _bindFlag, _usage, _bufferAllocatedSize);
 }
 
@@ -45,7 +46,7 @@ void D3DMemoryBuffer::upload() {
 	this->resize(0);
 }
 
-int32_t D3DMemoryBuffer::size() const
+uint32_t D3DMemoryBuffer::size() const
 {
 	return _buffer->size();
 }

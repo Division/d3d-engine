@@ -51,11 +51,15 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 	}
 
 	_prepareShaders();
+	_skinningRops.clear();
 
 	for (auto &queue : _queues) {
 		for (auto &rop : queue) {
 			if (rop.objectParams) {
 				_constantBufferManager->setObjectParamsBlock(&rop);
+			}
+			if (rop.skinningMatrices) {
+				_constantBufferManager->setSkinningMatricesBlock(&rop);
 			}
 		}
 	}
@@ -100,6 +104,9 @@ void SceneRenderer::_setupROP(RenderOperation &rop) {
 	context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	
 	_constantBufferManager->setObjectParams(rop.objectParamsBlockOffset);
+	if (rop.skinningMatrices) {
+		_constantBufferManager->setSkinningMatrices(rop.skinningOffset);
+	}
 
 	auto &material = rop.material;
 	if (material->_capsDirty) {
@@ -112,7 +119,8 @@ void SceneRenderer::_setupROP(RenderOperation &rop) {
 		context->PSSetSamplers(0, 1, texture0->samplerStatePointer());
 	}
 
-	auto shader = Engine::Get()->shaderGenerator()->getShaderWithCaps(material->shaderCaps());
+	auto &caps = rop.skinningMatrices ? material->shaderCapsSkinning() : material->shaderCaps();
+	auto shader = Engine::Get()->shaderGenerator()->getShaderWithCaps(caps);
 	auto layout = _inputLayoutCache->getLayout(rop.mesh, shader);
 	context->IASetInputLayout(layout);
 

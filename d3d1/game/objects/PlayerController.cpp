@@ -4,12 +4,13 @@
 
 #include "PlayerController.h"
 #include "render/texture/Texture.h"
-#include "EngTypes.h"
+#include "EngineTypes.h"
 #include "loader/TextureLoader.h"
-#include "render/material/MaterialTypes.h"
+#include "render/material/Material.h"
 #include "objects/LightObject.h"
 #include <memory>
-#include "EngineMain.h"
+#include "Engine.h"
+#include "system/Input.h"
 
 TexturePtr PlayerController::diffuse;
 TexturePtr PlayerController::normal;
@@ -35,13 +36,13 @@ void PlayerController::start() {
   _idlePlayback->play(true);
   _runPlayback->weight(0);
 
-  auto material = std::make_shared<MaterialTextureBumpSpecular>();
-  material->texture(diffuse);
-  material->normalMap(normal);
-  material->specularMap(specular);
+  auto material = std::make_shared<Material>();
+  material->texture0(diffuse);
+  //material->normalMap(normal);
+  //material->specularMap(specular);
   _material = material;
 
-  transform()->position(vec3(20, 0, -20));
+  transform()->position(vec3(20, 0, 20));
 
   _topLight = CreateGameObject<LightObject>();
   _topLight->transform()->parent(transform());
@@ -59,32 +60,34 @@ void PlayerController::start() {
 }
 
 void PlayerController::update(float dt) {
-  auto input = getEngine()->input();
+	auto input = Engine::Get()->input();
 
   bool shouldSlowDown = true;
 
   vec3 acceleration = vec3(0);
 
   if (_controlsEnabled) {
-    if (input->keyDown(Key::A)) {
+    if (input->keyDown(Key::S)) {
       acceleration += DIRECTION_LEFT;
       shouldSlowDown = false;
     }
 
-    if (input->keyDown(Key::D)) {
+    if (input->keyDown(Key::W)) {
       acceleration += DIRECTION_RIGHT;
       shouldSlowDown = false;
     }
 
-    if (input->keyDown(Key::W)) {
+    if (input->keyDown(Key::D)) {
       acceleration += DIRECTION_TOP;
       shouldSlowDown = false;
     }
 
-    if (input->keyDown(Key::S)) {
+    if (input->keyDown(Key::A)) {
       acceleration += DIRECTION_BOTTOM;
       shouldSlowDown = false;
     }
+
+	acceleration = -acceleration;
   }
 
   if (dt > 0) {
@@ -105,7 +108,7 @@ void PlayerController::update(float dt) {
 
   float sqSpeed = _speed.x * _speed.x + _speed.z * _speed.z;
   if (sqSpeed > 0.001) {
-    auto angle = (float)(atan2(_speed.z, -_speed.x) - M_PI / 2);
+    auto angle = (float)(atan2(_speed.z, -_speed.x) + M_PI / 2);
     transform()->rotation(glm::angleAxis(angle, vec3(0, 1, 0)));
     auto maxSpeed = MAX_SPEED;
     auto speed = sqrtf(sqSpeed);

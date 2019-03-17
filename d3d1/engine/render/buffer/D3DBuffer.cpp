@@ -9,7 +9,7 @@
 
 const int ALIGN_BYTES = 4;
 
-D3DBuffer::D3DBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, int32_t size, void *data)
+D3DBuffer::D3DBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, uint32_t size, void *data)
 	: _provider(provider), _bindFlag(bindFlag), _usage(usage), _size(size) {
 
 	D3D11_BUFFER_DESC bufferDesc;

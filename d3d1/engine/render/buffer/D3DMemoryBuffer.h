@@ -13,10 +13,10 @@ class D3DBuffer;
 
 class D3DMemoryBuffer : public MemoryBuffer {
 public:
-	D3DMemoryBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, int32_t fixedSize = 0);
+	D3DMemoryBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, uint32_t fixedSize = 0);
 
 	void upload();
-	int32_t size() const;
+	uint32_t size() const;
 
 	ID3D11Buffer *buffer();
 
@@ -28,7 +28,7 @@ protected:
 	std::shared_ptr<D3DBuffer> _buffer;
 	D3D11_BIND_FLAG _bindFlag;
 	D3D11_USAGE _usage;
-	int32_t _fixedSize;
+	uint32_t _fixedSize;
 
-	unsigned int _bufferAllocatedSize = 0;
+	uint32_t _bufferAllocatedSize = 0;
 };

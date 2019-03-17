@@ -5,6 +5,12 @@ struct VIn {
 #if defined(ATTRIB_TEXCOORD0)
     float2 texCoord0 : TEXCOORD;
 #endif
+#if defined (ATTRIB_JOINT_INDEX)
+    float3 jointIndex : BLENDINDICES;
+#endif
+#if defined (ATTRIB_JOINT_WEIGHT)
+    float3 jointWeight : BLENDWEIGHT;
+#endif
 };
 
 struct VOut
@@ -16,8 +22,8 @@ struct VOut
 };
 
 cbuffer VS_CONSTANT_BUFFER : register(b0) {
-    float4x4 modelMatrix;
-    float4x4 normalMatrix;
+    float4x4 objectModelMatrix;
+    float4x4 objectNormalMatrix;
     float2 uvScale;
     float2 uvOffset;
     uint layer;
@@ -30,8 +36,25 @@ cbuffer VS_CONSTANT_BUFFER : register(b1) {
     float4x4 cameraProjectionMatrix;
 };
 
+#if defined(CONSTANT_BUFFER_SKINNING_MATRICES)
+cbuffer VS_CONSTANT_BUFFER : register(b2) {
+    float4x4 skinningMatrices[70];
+};
+#endif
+
 VOut VShader(VIn input) {
     VOut output;
+
+    float4x4 modelMatrix;
+#if defined(CAP_SKINNING)
+    modelMatrix = float4x4(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    modelMatrix += skinningMatrices[int(input.jointIndex.x)] * input.jointWeight.x;
+    modelMatrix += skinningMatrices[int(input.jointIndex.y)] * input.jointWeight.y;
+    modelMatrix += skinningMatrices[int(input.jointIndex.z)] * input.jointWeight.z;
+#else
+    modelMatrix = objectModelMatrix;
+#endif
+
     float4 position_worldspace = mul(modelMatrix, input.position);
     float4 position_cameraspace = mul(cameraViewMatrix, position_worldspace);
     output.position = mul(cameraProjectionMatrix, position_cameraspace);

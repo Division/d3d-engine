@@ -14,7 +14,7 @@ using namespace nlohmann;
 namespace loader {
 
   mat4 getMatrixFromJSON(json matrix);
-
+  void flipMatrix(mat4 &matrix);
 }
 
 #endif //CPPWRAPPER_MODELLOADERUTILS_H

@@ -5,6 +5,7 @@
 #include "ModelBundle.h"
 #include "system/Logging.h"
 #include "loader/ModelLoaderUtils.h"
+#include "utils/Math.h"
 
 void LightData::loadFromJSON(const json &jsonData) {
   type = jsonData["type"];
@@ -58,6 +59,9 @@ void AnimationData::loadFrames(std::vector<float> &frames) {
   if (isMatrix) {
     matrices.resize(frameCount);
     memcpy(&matrices[0], &frames[0], sizeof(mat4) * frameCount);
+	for (int i = 0; i < matrices.size(); i++) {
+		loader::flipMatrix(matrices[i]);
+	}
   } else {
     int addedCount = 0;
     if (hasPosition) {

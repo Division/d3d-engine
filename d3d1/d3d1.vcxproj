@@ -215,6 +215,7 @@
     <ClInclude Include="game\Game.h" />
     <ClInclude Include="game\level\Level.h" />
     <ClInclude Include="game\objects\FollowCamera.h" />
+    <ClInclude Include="game\objects\PlayerController.h" />
     <ClInclude Include="game\objects\Sprite.h" />
     <ClInclude Include="game\objects\StainGlass.h" />
     <ClInclude Include="Resource.h" />
@@ -268,6 +269,7 @@
     <ClCompile Include="game\Game.cpp" />
     <ClCompile Include="game\level\Level.cpp" />
     <ClCompile Include="game\objects\FollowCamera.cpp" />
+    <ClCompile Include="game\objects\PlayerController.cpp" />
     <ClCompile Include="game\objects\Sprite.cpp" />
     <ClCompile Include="game\objects\StainGlass.cpp" />
     <ClCompile Include="stdafx.cpp">

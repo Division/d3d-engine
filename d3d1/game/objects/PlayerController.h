@@ -6,7 +6,7 @@
 #define CPPWRAPPER_PLAYERCONTROLLER_H
 
 #include "objects/SkinnedMeshObject.h"
-#include "EngTypes.h"
+#include "EngineTypes.h"
 
 
 class PlayerController : public SkinnedMeshObject {

@@ -9,19 +9,22 @@
 ConstantBufferManager::ConstantBufferManager() {
 	_objectParams = std::make_unique<D3DMemoryBuffer>(Engine::Get(),
 		D3D11_BIND_CONSTANT_BUFFER,
-		D3D11_USAGE_DYNAMIC,
-		DXCaps::CONSTANT_BUFFER_MAX_SIZE
-		);
+		D3D11_USAGE_DYNAMIC
+	);
 	_cameraData = std::make_unique<D3DMemoryBuffer>(Engine::Get(),
 		D3D11_BIND_CONSTANT_BUFFER,
-		D3D11_USAGE_DYNAMIC,
-		DXCaps::CONSTANT_BUFFER_MAX_SIZE
-		);
+		D3D11_USAGE_DYNAMIC
+	);
+	_skinningMatrices = std::make_unique<D3DMemoryBuffer>(Engine::Get(),
+		D3D11_BIND_CONSTANT_BUFFER,
+		D3D11_USAGE_DYNAMIC
+	);
 }
 
 void ConstantBufferManager::upload() {
 	_objectParams->upload();
 	_cameraData->upload();
+	_skinningMatrices->upload();
 }
 
 void ConstantBufferManager::setObjectParamsBlock(RenderOperation *rop) {
@@ -32,6 +35,13 @@ void ConstantBufferManager::setObjectParamsBlock(RenderOperation *rop) {
 	}
 }
 
+void ConstantBufferManager::setSkinningMatricesBlock(RenderOperation *rop) {
+	if (rop->skinningMatrices) {
+		auto address = _skinningMatrices->appendData((void *)rop->skinningMatrices, sizeof(ConstantBufferStruct::SkinningMatrices), DXCaps::CONSTANT_BUFFER_ALIGNMENT);
+		rop->skinningOffset.offset = address;
+		rop->skinningOffset.index = 0;
+	}
+}
 
 void ConstantBufferManager::setObjectParams(const MultiBufferAddress &address) {
 	auto constantBuffer = _objectParams->buffer();
@@ -41,6 +51,17 @@ void ConstantBufferManager::setObjectParams(const MultiBufferAddress &address) {
 	auto context = Engine::Get()->getD3DContext();
 	context->VSSetConstantBuffers1((UINT)ConstantBufferName::ObjectParams, 1, &constantBuffer, &firstConstant, &constantCount);
 	context->PSSetConstantBuffers1((UINT)ConstantBufferName::ObjectParams, 1, &constantBuffer, &firstConstant, &constantCount);
+}
+
+void ConstantBufferManager::setSkinningMatrices(const MultiBufferAddress &address) {
+	auto constantBuffer = _skinningMatrices->buffer();
+	UINT firstConstant = address.offset / DXCaps::CONSTANT_BUFFER_CONSTANT_SIZE;
+	UINT constantCount = sizeof(ConstantBufferStruct::SkinningMatrices) / DXCaps::CONSTANT_BUFFER_CONSTANT_SIZE;
+	constantCount = (UINT)ceilf((float)constantCount / 16.0f) * 16;
+
+	auto context = Engine::Get()->getD3DContext();
+	context->VSSetConstantBuffers1((UINT)ConstantBufferName::SkinningMatrices, 1, &constantBuffer, &firstConstant, &constantCount);
+	context->PSSetConstantBuffers1((UINT)ConstantBufferName::SkinningMatrices, 1, &constantBuffer, &firstConstant, &constantCount);
 }
 
 uint32_t ConstantBufferManager::addCamera(std::shared_ptr<ICameraParamsProvider> camera) {

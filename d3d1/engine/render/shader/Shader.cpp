@@ -40,7 +40,6 @@ const std::map<ShaderCaps, ShaderConfig> SHADER_CAP_CONFIG = {
 };
 
 
-
 ID3D11InputLayout *Shader::createInputLayout(D3D11_INPUT_ELEMENT_DESC *inputDescription, int32_t count) {
 	//if (!_ready) { return nullptr; }
 	ID3D11InputLayout *result;

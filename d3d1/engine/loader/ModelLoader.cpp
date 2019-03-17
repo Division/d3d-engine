@@ -28,6 +28,8 @@ const std::map<std::string, int> ATTRIB_COUNT = {
 
 void loadGeometry(std::istream &stream, json geometryJson, ModelBundlePtr bundle);
 void loadAnimation(std::istream &stream, json animationJson, ModelBundlePtr bundle);
+void flipVertices(std::vector<float> &vertices);
+void flipIndices(std::vector<uint16_t> &indices);
 template <typename T> void loadArray(std::istream &stream, std::vector<T> &data, int count);
 
 ModelBundlePtr loader::loadModel(const std::string &filename) {
@@ -89,6 +91,7 @@ void loadGeometry(std::istream &stream, json geometryJson, ModelBundlePtr bundle
 
     indices.resize(indexCount);
     loadArray<unsigned short>(stream, indices, indexCount);
+	flipIndices(indices);
     mesh->setIndices(indices);
 
     for (auto &attribID : attributes) {
@@ -98,6 +101,7 @@ void loadGeometry(std::istream &stream, json geometryJson, ModelBundlePtr bundle
       loadArray<float>(stream, attribData, totalAttribCount);
 
       if (attribID == ATTRIB_POSITION) {
+		flipVertices(attribData);
         mesh->setVertices(&attribData[0], vertexCount);
       }
 
@@ -151,6 +155,22 @@ void loadAnimation(std::istream &stream, json animationJson, ModelBundlePtr bund
       animationData->loadFrames(tempAnimations);
     }
   }
+}
+
+void flipIndices(std::vector<uint16_t> &indices) {
+	for (int i = 0; i < indices.size() / 3; i++) {
+		int index = i * 3;
+		auto temp = indices[index];
+		indices[index] = indices[index + 2];
+		indices[index + 2] = temp;
+	}
+}
+
+void flipVertices(std::vector<float> &vertices) {
+	for (int i = 0; i < vertices.size() / 3; i++) {
+		int index = i * 3;
+		vertices[index + 2] = -vertices[index + 2];
+	}
 }
 
 template <typename T> void loadArray(std::istream &stream, std::vector<T> &data, int count) {

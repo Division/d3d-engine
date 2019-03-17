@@ -9,13 +9,16 @@ class ConstantBufferManager {
 public:
 	ConstantBufferManager();
 
-	void setObjectParamsBlock(RenderOperation *rop);
 	void upload();
+	void setObjectParamsBlock(RenderOperation *rop);
 	void setObjectParams(const MultiBufferAddress &address);
+	void setSkinningMatricesBlock(RenderOperation *rop);
+	void setSkinningMatrices(const MultiBufferAddress &address);
 	uint32_t addCamera(std::shared_ptr<ICameraParamsProvider> camera);
 	void activateCamera(uint32_t offset);
 
 private:
 	std::unique_ptr<D3DMemoryBuffer> _objectParams;
 	std::unique_ptr<D3DMemoryBuffer> _cameraData;
+	std::unique_ptr<D3DMemoryBuffer> _skinningMatrices;
 };

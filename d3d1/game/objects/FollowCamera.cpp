@@ -3,27 +3,27 @@
 //
 
 #include "FollowCamera.h"
-//#include "PlayerController.h"
+#include "PlayerController.h"
 #include "Engine.h"
 #include "system/Input.h"
 
 void FollowCamera::start() {
- /* auto container = CreateGameObject<GameObject>();
+  auto container = CreateGameObject<GameObject>();
 
-  container->transform()->rotate(vec3(0, 1, 0), RAD(225));
-  container->transform()->rotate(vec3(1, 0, 0), RAD(-55));
+  container->transform()->rotate(vec3(0, 1, 0), -RAD(225));
+  container->transform()->rotate(vec3(1, 0, 0), RAD(55));
 
-  _container = container;*/
-  setFreeCamera(true);
+  _container = container;
+  setFreeCamera(false);
 }
 
-/*
+
 void FollowCamera::setPlayer(std::shared_ptr<PlayerController> player) {
   _player = player;
-}*/
+}
 
 void FollowCamera::update(float dt) {
-  //auto player = _player.lock();
+  auto player = _player.lock();
 
   if (_isFreeCamera) {
     auto input = Engine::Get()->input();
@@ -60,9 +60,9 @@ void FollowCamera::update(float dt) {
     transform()->translate(posDelta * dt * 20.0f);
     quat rotation(vec3(_angleX, _angleY, 0));
     transform()->rotation(rotation);
-  }/* else if (player) {
+  } else if (player) {
     _container.lock()->transform()->position(player->transform()->position() + vec3(0, 1, 0));
-  }*/
+  }
 
 }
 
@@ -76,7 +76,7 @@ void FollowCamera::setFreeCamera(bool isFree) {
     //_angleY = (float)M_PI;
   } else {
     transform()->parent(_container.lock()->transform());
-    transform()->position(vec3(0, 0, 15));
+    transform()->position(vec3(0, 0, -15));
     transform()->rotation(quat());
   }
 }

@@ -24,7 +24,7 @@ public:
   char *bufferPointer() { return &_data[0]; };
 
 protected:
-  unsigned int _size = 0;
+  uint32_t _size = 0;
   bool _dirty = true;
   std::vector<char> _data;
 };

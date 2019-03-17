@@ -8,6 +8,10 @@
 #include "loader/SpritesheetLoader.h"
 #include "loader/TextureLoader.h"
 #include "render/texture/SpriteSheet.h"
+#include "loader/ModelLoader.h"
+#include "loader/HierarchyLoader.h"
+#include "objects/PlayerController.h"
+#include "system/Input.h"
 
 float angle = 0;
 
@@ -22,7 +26,19 @@ void Game::init() {
 	_level = std::make_shared<Level>(_scene, _spritesheet, decals);
 	_level->load("resources/level/level1.mdl");
 
-	//_camera->setPlayer(_player);
+	auto characterBundle = loader::loadModel("resources/models/dwarf/dwarf.mdl");
+	auto characterIdle = loader::loadModel("resources/models/dwarf/dwarf_idle.mdl");
+	auto characterRun = loader::loadModel("resources/models/dwarf/dwarf_run.mdl");
+	auto characterAttackLeg = loader::loadModel("resources/models/dwarf/dwarf_attack_leg.mdl");
+	characterBundle->appendAnimationBundle(characterRun, "run");
+	characterBundle->appendAnimationBundle(characterIdle, "idle");
+	characterBundle->appendAnimationBundle(characterAttackLeg, "attack_leg");
+
+	_player = loader::loadSkinnedMesh<PlayerController>(characterBundle);
+	//_player->transform()->position(vec3(-50, 1, 15));
+	_player->transform()->scale(vec3(0.014, 0.014, 0.014));
+
+	_camera->setPlayer(_player);
 	_obj1 = CreateGameObject<MeshObject>();
 	_obj2 = CreateGameObject<MeshObject>();
 	
@@ -48,4 +64,11 @@ void Game::update(float dt) {
 	_obj2->transform()->rotate(vec3(0, 0, 1), M_PI * dt * 2);
 	_scene->update(dt);
 	Engine::Get()->renderScene(_scene, _camera, nullptr);
+
+	auto input = Engine::Get()->input();
+	if (input->keyDown(Key::Tab)) {
+		_cameraControl = !_cameraControl;
+		_camera->setFreeCamera(_cameraControl);
+		_player->controlsEnabled(!_cameraControl);
+	}
 }

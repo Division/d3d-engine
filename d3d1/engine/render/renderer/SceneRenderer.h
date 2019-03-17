@@ -30,6 +30,7 @@ private:
 	std::unique_ptr<InputLayoutCache> _inputLayoutCache;
 	//InputLayoutCache *_inputLayoutCache;
 	std::vector<RenderOperation> _queues[(int)RenderQueue::Count];
+	std::vector<RenderOperation *>_skinningRops;
 
 	mutable std::vector<std::shared_ptr<IShadowCaster>> _shadowCasters;
 };

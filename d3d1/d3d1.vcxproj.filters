@@ -16,9 +16,6 @@
     <Filter Include="engine">
       <UniqueIdentifier>{8dfffdda-00f4-4ab7-a2b0-a44f5c399198}</UniqueIdentifier>
     </Filter>
-    <Filter Include="engine\buffer">
-      <UniqueIdentifier>{9e53472a-8fc7-4b06-b8da-0ed43797ca9a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="engine\render">
       <UniqueIdentifier>{d9237eee-838a-4381-9d26-62d41739e55c}</UniqueIdentifier>
     </Filter>
@@ -70,6 +67,9 @@
     <Filter Include="game\level">
       <UniqueIdentifier>{f9f671a8-72b8-4fa1-a247-e3a8d2976b1c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\render\buffer">
+      <UniqueIdentifier>{9e53472a-8fc7-4b06-b8da-0ed43797ca9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -103,16 +103,16 @@
       <Filter>engine\core</Filter>
     </ClInclude>
     <ClInclude Include="engine\render\buffer\MemoryBuffer.h">
-      <Filter>engine\buffer</Filter>
+      <Filter>engine\render\buffer</Filter>
     </ClInclude>
     <ClInclude Include="engine\render\buffer\D3DBuffer.h">
-      <Filter>engine\buffer</Filter>
+      <Filter>engine\render\buffer</Filter>
     </ClInclude>
     <ClInclude Include="engine\DXCaps.h">
       <Filter>engine</Filter>
     </ClInclude>
     <ClInclude Include="engine\render\buffer\D3DMemoryBuffer.h">
-      <Filter>engine\buffer</Filter>
+      <Filter>engine\render\buffer</Filter>
     </ClInclude>
     <ClInclude Include="engine\scene\Scene.h">
       <Filter>engine\scene</Filter>
@@ -175,7 +175,7 @@
       <Filter>engine\render\shader</Filter>
     </ClInclude>
     <ClInclude Include="engine\render\buffer\MultiBufferAddress.h">
-      <Filter>engine\buffer</Filter>
+      <Filter>engine\render\buffer</Filter>
     </ClInclude>
     <ClInclude Include="engine\IGame.h">
       <Filter>engine</Filter>
@@ -276,6 +276,9 @@
     <ClInclude Include="game\objects\Sprite.h">
       <Filter>game\objects</Filter>
     </ClInclude>
+    <ClInclude Include="game\objects\PlayerController.h">
+      <Filter>game\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -294,16 +297,16 @@
       <Filter>engine\system</Filter>
     </ClCompile>
     <ClCompile Include="engine\render\buffer\MemoryBuffer.cpp">
-      <Filter>engine\buffer</Filter>
+      <Filter>engine\render\buffer</Filter>
     </ClCompile>
     <ClCompile Include="engine\render\buffer\D3DBuffer.cpp">
-      <Filter>engine\buffer</Filter>
+      <Filter>engine\render\buffer</Filter>
     </ClCompile>
     <ClCompile Include="engine\DXCaps.cpp">
       <Filter>engine</Filter>
     </ClCompile>
     <ClCompile Include="engine\render\buffer\D3DMemoryBuffer.cpp">
-      <Filter>engine\buffer</Filter>
+      <Filter>engine\render\buffer</Filter>
     </ClCompile>
     <ClCompile Include="engine\scene\Scene.cpp">
       <Filter>engine\scene</Filter>
@@ -423,6 +426,9 @@
       <Filter>game\objects</Filter>
     </ClCompile>
     <ClCompile Include="game\objects\Sprite.cpp">
+      <Filter>game\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="game\objects\PlayerController.cpp">
       <Filter>game\objects</Filter>
     </ClCompile>
   </ItemGroup>

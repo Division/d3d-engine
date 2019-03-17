@@ -71,8 +71,16 @@ private:
 				{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->texCoordOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);
 		}
-
-		
+		if (vertexAttribSet.hasCap(VertexAttrib::JointIndices)) {
+			layout.push_back(
+				{ "BLENDINDICES", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->jointIndexOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			);
+		}
+		if (vertexAttribSet.hasCap(VertexAttrib::JointWeights)) {
+			layout.push_back(
+				{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->weightOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			);
+		}
 
 		return shader->createInputLayout(&layout[0], layout.size());
 	}
