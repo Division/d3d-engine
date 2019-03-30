@@ -16,6 +16,8 @@
 float angle = 0;
 
 void Game::init() {
+
+
 	_scene = std::make_shared<Scene>();
 	_camera = CreateGameObject<FollowCamera>();
 
@@ -35,7 +37,6 @@ void Game::init() {
 	characterBundle->appendAnimationBundle(characterAttackLeg, "attack_leg");
 
 	_player = loader::loadSkinnedMesh<PlayerController>(characterBundle);
-	//_player->transform()->position(vec3(-50, 1, 15));
 	_player->transform()->scale(vec3(0.014, 0.014, 0.014));
 
 	_camera->setPlayer(_player);

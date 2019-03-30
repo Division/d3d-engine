@@ -14,10 +14,15 @@
 #include "render/renderer/InputLayoutCache.h"
 #include "system/Window.h"
 #include "system/Input.h"
+#include "tbb/task_scheduler_init.h"
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
 
 Engine *Engine::_instance = nullptr;
 
 Engine::Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_ptr<IGame> game) : _game(game) {
+	tbb::task_scheduler_init init;
+
 	_instance = this;
 		
 	LARGE_INTEGER li;
