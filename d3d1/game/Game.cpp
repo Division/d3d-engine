@@ -12,31 +12,38 @@
 #include "loader/HierarchyLoader.h"
 #include "objects/PlayerController.h"
 #include "system/Input.h"
+#include "utils/Performance.h"
 
 float angle = 0;
 
 void Game::init() {
-
-
 	_scene = std::make_shared<Scene>();
 	_camera = CreateGameObject<FollowCamera>();
 
-	_spritesheet = loader::loadSpritesheet("resources/common/decals.json");
-	auto decals = loader::loadTexture("resources/common/" + _spritesheet->spritesheetName());
-	//engine->projectorTexture(decals);
+	tbb::task_group loadingGroup;
 
-	_level = std::make_shared<Level>(_scene, _spritesheet, decals);
-	_level->load("resources/level/level1.mdl");
+	loadingGroup.run([&] {
+		_spritesheet = loader::loadSpritesheet("resources/common/decals.json");
+		auto decals = loader::loadTexture("resources/common/" + _spritesheet->spritesheetName());
+		//engine->projectorTexture(decals);
 
-	auto characterBundle = loader::loadModel("resources/models/dwarf/dwarf.mdl");
-	auto characterIdle = loader::loadModel("resources/models/dwarf/dwarf_idle.mdl");
-	auto characterRun = loader::loadModel("resources/models/dwarf/dwarf_run.mdl");
-	auto characterAttackLeg = loader::loadModel("resources/models/dwarf/dwarf_attack_leg.mdl");
-	characterBundle->appendAnimationBundle(characterRun, "run");
-	characterBundle->appendAnimationBundle(characterIdle, "idle");
-	characterBundle->appendAnimationBundle(characterAttackLeg, "attack_leg");
+		_level = std::make_shared<Level>(_scene, _spritesheet, decals);
+		_level->load("resources/level/level1.mdl");
+	});
 
-	_player = loader::loadSkinnedMesh<PlayerController>(characterBundle);
+	loadingGroup.run([&] {
+		_playerModel = loader::loadModel("resources/models/dwarf/dwarf.mdl");
+		auto characterIdle = loader::loadModel("resources/models/dwarf/dwarf_idle.mdl");
+		auto characterRun = loader::loadModel("resources/models/dwarf/dwarf_run.mdl");
+		auto characterAttackLeg = loader::loadModel("resources/models/dwarf/dwarf_attack_leg.mdl");
+		_playerModel->appendAnimationBundle(characterRun, "run");
+		_playerModel->appendAnimationBundle(characterIdle, "idle");
+		_playerModel->appendAnimationBundle(characterAttackLeg, "attack_leg");
+	});
+
+	loadingGroup.wait();
+
+	_player = loader::loadSkinnedMesh<PlayerController>(_playerModel);
 	_player->transform()->scale(vec3(0.014, 0.014, 0.014));
 
 	_camera->setPlayer(_player);
@@ -71,5 +78,9 @@ void Game::update(float dt) {
 		_cameraControl = !_cameraControl;
 		_camera->setFreeCamera(_cameraControl);
 		_player->controlsEnabled(!_cameraControl);
+	}
+
+	if (input->keyDown(Key::Equal)) {
+		engine::Performance::printAverages();
 	}
 }

@@ -15,6 +15,8 @@ public:
 
 	uint32_t width() const { return _width;  }
 	uint32_t height() const { return _height; }
+	float aspect() const { return (float)_width / (float)_height; }
+	vec4 viewport() const { return vec4(0, 0, _width, _height); }
 
 	bool quitTriggered() const { return _quitTriggered; }
 

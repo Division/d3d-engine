@@ -7,6 +7,12 @@
 #include "objects/Camera.h"
 #include "objects/LightObject.h"
 #include <algorithm>
+#include "utils/Performance.h"
+#include <thread>
+#include "cvmarkersobj.h"
+
+Concurrency::diagnostic::marker_series markers(_T("flag series"));
+
 //#include "EngineMain.h"
 
 #define IS_CAMERA(object) (bool)(dynamic_cast<Camera *>((object).get()))
@@ -143,6 +149,7 @@ void Scene::update(float dt) {
     }
   }
 
+
   for (auto &object : _gameObjects) {
     if (object->active()) {
 //      getEngine()->debugDraw()->drawOBB({ object->transform()->worldMatrix(), object->cullingData().bounds.min, object->cullingData().bounds.max }, vec4(1, 1, 0, 1));
@@ -164,12 +171,17 @@ void Scene::update(float dt) {
 }
 
 void Scene::_updateTransforms() {
+  engine::Performance::startTimer(engine::Performance::Entry::UpdateTransform);
+
+  Concurrency::diagnostic::span s1(markers, _T("Update transform"));
   for (auto &transform : _rootTransformMap) {
-    transform.second->_updateTransform(nullptr, false);
+	  transform.second->_updateTransform(nullptr, false);
   }
+
+  engine::Performance::stopTimer(engine::Performance::Entry::UpdateTransform);
 }
 
-Scene::Visibility &Scene::_getVisibilityForCamera(const std::shared_ptr<ICameraParamsProvider> &camera) const {
+Scene::Visibility &Scene::_getVisibilityForCamera(const std::shared_ptr<ICameraParamsProvider> &camera, bool concurrent) const {
   auto &visibility = _visibilityMap[camera];
   visibility.hasData = true;
   visibility.projectors.clear();
@@ -178,6 +190,7 @@ Scene::Visibility &Scene::_getVisibilityForCamera(const std::shared_ptr<ICameraP
 
   auto &frustum = camera->frustum();
   unsigned int counter = 0;
+
   for (auto &object : _projectors) {
     auto layerVisible = (bool)(object->layer() & camera->cameraVisibilityMask());
     if (!layerVisible || !_objectIsVisible(object, frustum)) { continue; }
@@ -195,10 +208,36 @@ Scene::Visibility &Scene::_getVisibilityForCamera(const std::shared_ptr<ICameraP
 
 //  ENGLog("visible lights: %i, projectors: %i", visibility.lights.size(), visibility.projectors.size());
 
-  for (auto &object : _gameObjects) {
-    auto layerVisible = (bool)(object->layer() & camera->cameraVisibilityMask());
-    //if (!layerVisible || !object->isRenderable() || !_objectIsVisible(object, frustum)) { continue; }
-    visibility.objects.push_back(object);
+  concurrent = true;
+  if (concurrent) {
+	  Concurrency::diagnostic::span s1(markers, _T("Camera object visibility"));
+	  engine::Performance::startTimer(engine::Performance::Entry::UpdateVisibility);
+	  _concurrentQueue.clear();
+	  tbb::parallel_for(size_t(0), _gameObjects.size(), [&](size_t i) {
+		  auto &object = _gameObjects[i];
+		  auto layerVisible = (bool)(object->layer() & camera->cameraVisibilityMask());
+		  if (!layerVisible || !object->isRenderable() || !_objectIsVisible(object, frustum)) { return; }
+		  _concurrentQueue.push(object);
+	  });
+
+	  while (!_concurrentQueue.empty()) {
+		  GameObjectPtr object;
+		  _concurrentQueue.try_pop(object);
+		  visibility.objects.push_back(object);
+	  }
+
+	  engine::Performance::stopTimer(engine::Performance::Entry::UpdateVisibility);
+  }
+  else {
+	  engine::Performance::startTimer(engine::Performance::Entry::UpdateVisibility);
+
+	  for (auto &object : _gameObjects) {
+		auto layerVisible = (bool)(object->layer() & camera->cameraVisibilityMask());
+		if (!layerVisible || !object->isRenderable() || !_objectIsVisible(object, frustum)) { continue; }
+		visibility.objects.push_back(object);
+	  }
+
+	  engine::Performance::stopTimer(engine::Performance::Entry::UpdateVisibility);
   }
 
   return visibility;

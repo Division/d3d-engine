@@ -26,12 +26,17 @@ public:
 
 	static Engine *Get() { return _instance; }
 
+	double time() const { return _engineTime; }
 	void startLoop();
 
 	ID3D11DeviceContext1 *getD3DContext() { return context;  };
 	ID3D11Device1 *getD3DDevice() { return dev;  };
 	const ShaderGenerator *shaderGenerator() const { return _shaderGenerator.get(); }
 	const Input *input() const { return _input.get(); }
+	const Window *window() const { return _window.get(); }
+
+	ID3D11RenderTargetView *renderTargetView() const { return backbuffer; };
+	ID3D11DepthStencilView *depthStencilView() const { return depthStencil; };
 
 	void render();
 	void renderScene(std::shared_ptr<Scene> scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D);

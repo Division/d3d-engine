@@ -1,5 +1,4 @@
-﻿
-#include "Engine.h"
+﻿#include "Engine.h"
 #include "render/shader/Shader.h"
 #include "system/Logging.h"
 #include "render/buffer/D3DBuffer.h"
@@ -17,14 +16,18 @@
 #include "tbb/task_scheduler_init.h"
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
+#include "utils/Performance.h"
 
 Engine *Engine::_instance = nullptr;
 
-Engine::Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_ptr<IGame> game) : _game(game) {
-	tbb::task_scheduler_init init;
+//tbb::task_scheduler_init init(1);
 
+Engine::Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_ptr<IGame> game) : _game(game) {
 	_instance = this;
-		
+	SetThreadAffinityMask(GetCurrentThread(), 1 << 0);
+	
+	engine::Performance::initialize();
+
 	LARGE_INTEGER li;
 	QueryPerformanceFrequency(&li);
 	_frequency = double(li.QuadPart);
@@ -175,6 +178,8 @@ void Engine::_initPipeline() {
 }
 
 void Engine::render() {
+	engine::Performance::startTimer(engine::Performance::Entry::Frame);
+
 	if (!_initialized) {
 		_initialized = true;
 		_game.lock()->init();
@@ -184,11 +189,12 @@ void Engine::render() {
 	QueryPerformanceCounter(&time);
 	double dt = double(time.QuadPart - _lastTime.QuadPart) / double(_frequency);
 	_lastTime = time;
+	_engineTime = time.QuadPart / double(_frequency);
 
 	const float color[4] = { 0.0f, 0.2f, 0.4f, 1.0f };
 	// clear the back buffer to a deep blue
-	context->ClearRenderTargetView(backbuffer, color);
-	context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	//context->ClearRenderTargetView(backbuffer, color);
+	//context->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	// Set the viewport
 	D3D11_VIEWPORT viewport;
@@ -204,8 +210,12 @@ void Engine::render() {
 	context->RSSetViewports(1, &viewport);
 
 	_game.lock()->update(float(dt));
+	engine::Performance::stopTimer(engine::Performance::Entry::Frame);
 
+	engine::Performance::startTimer(engine::Performance::Entry::SwapBuffers);
+	context->OMSetRenderTargets(1, &backbuffer, depthStencil);
 	swapchain->Present(0, 0);
+	engine::Performance::stopTimer(engine::Performance::Entry::SwapBuffers);
 }
 
 void Engine::renderScene(std::shared_ptr<Scene> scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D) {

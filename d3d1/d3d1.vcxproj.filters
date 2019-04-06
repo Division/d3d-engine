@@ -279,6 +279,15 @@
     <ClInclude Include="game\objects\PlayerController.h">
       <Filter>game\objects</Filter>
     </ClInclude>
+    <ClInclude Include="engine\utils\Performance.h">
+      <Filter>engine\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\renderer\PassRenderer.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\renderer\RenderState.h">
+      <Filter>engine\render\renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -430,6 +439,18 @@
     </ClCompile>
     <ClCompile Include="game\objects\PlayerController.cpp">
       <Filter>game\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\utils\Performance.cpp">
+      <Filter>engine\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\renderer\PassRenderer.cpp">
+      <Filter>engine\render\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\renderer\RenderState.cpp">
+      <Filter>engine\render\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\renderer\InputLayoutCache.cpp">
+      <Filter>engine\render\renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -9,7 +9,9 @@
 #include "loader/ShaderLoader.h"
 #include "Engine.h"
 #include "Shader.h"
+#include "tbb/tbb.h"
 
+tbb::spin_mutex GeneratorMutex;
 
 const std::string TEMPLATE_ROOT = "resources/shaders/";
 
@@ -111,6 +113,8 @@ json ShaderGenerator::_getJSONForCaps(ShaderCapsSetPtr caps) const {
 
 ShaderPtr ShaderGenerator::getShaderWithCaps(const ShaderCapsSet &caps, const std::string &rootTemplate) const {
   ShaderPtr result;
+
+  tbb::spin_mutex::scoped_lock lock(GeneratorMutex); // TODO: replace with concurrent map
 
   auto &shaderCache = _shaders[rootTemplate];
   auto iterator = shaderCache.find(caps.getBitmask());

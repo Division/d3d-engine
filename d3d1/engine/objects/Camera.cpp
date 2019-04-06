@@ -3,21 +3,21 @@
 //
 
 #include "Camera.h"
-//#include "EngineMain.h"
+#include "Engine.h"
 #include "EngineMath.h"
 //#include "render/renderer/Renderer.h"
+#include "system/Window.h"
 
 void Camera::_updateProjection() {
   //auto engine = getEngine();
-  //auto window = engine->window();
+  auto window = Engine::Get()->window();
 
   float width = 800.0f;
   float height = 600.0f;
   float aspect = width / height;
   switch (_mode) {
     case Mode::Perspective:
-      //_projectionMatrix = glm::perspective(glm::radians(_fov), window->aspect(), 0.1f, 100.0f);
-		_projectionMatrix = glm::perspective(glm::radians(_fov), 800.0f / 600.0f, 0.1f, 100.0f);
+      _projectionMatrix = glm::perspective(glm::radians(_fov), window->aspect(), 0.1f, 100.0f);
       break;
 
     case Mode::Ortho: {
@@ -39,8 +39,8 @@ void Camera::_updateView() {
 }
 
 void Camera::_updateViewport() {
-  //auto engine = getEngine();
-  //_viewport = engine->window()->viewport(); // TODO: modify if camera rendertarget support is required
+	auto window = Engine::Get()->window();
+  _viewport = window->viewport(); // TODO: modify if camera rendertarget support is required
 }
 
 void Camera::postUpdate() {

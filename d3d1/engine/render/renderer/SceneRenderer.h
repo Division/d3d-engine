@@ -8,26 +8,26 @@ class D3DMemoryBuffer;
 class ConstantBufferManager;
 class InputLayoutCache;
 class IShadowCaster;
+class PassRenderer;
 
-class SceneRenderer : public IRenderer {
+class SceneRenderer {
 public:
 	SceneRenderer();
+	virtual ~SceneRenderer() = default;
+
 	void renderScene(ScenePtr scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D = nullptr);
 
 	const InputLayoutCache *inputLayoutCache() const { return _inputLayoutCache.get(); }
 
-	// IRenderer
-	void addRenderOperation(RenderOperation &rop, RenderQueue queue) override;
-	void renderMesh(MeshPtr mesh) override;
-
 private:
-	void _setupROP(RenderOperation &rop);
 	void _clearQueues();
 	void _prepareShaders();
 
 private:
-	std::unique_ptr<ConstantBufferManager> _constantBufferManager;
-	std::unique_ptr<InputLayoutCache> _inputLayoutCache;
+	std::unique_ptr<PassRenderer> _mainCameraRenderer;
+	std::unique_ptr<PassRenderer> _depthPrePassRenderer;
+	std::shared_ptr<ConstantBufferManager> _constantBufferManager;
+	std::shared_ptr<InputLayoutCache> _inputLayoutCache;
 	//InputLayoutCache *_inputLayoutCache;
 	std::vector<RenderOperation> _queues[(int)RenderQueue::Count];
 	std::vector<RenderOperation *>_skinningRops;

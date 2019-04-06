@@ -21,6 +21,7 @@ private:
 	std::shared_ptr<Scene> _scene;
 	std::shared_ptr<FollowCamera> _camera;
 	std::shared_ptr<PlayerController> _player;
+	ModelBundlePtr _playerModel;
 	MeshObjectPtr _obj1;
 	MeshObjectPtr _obj2;
 };

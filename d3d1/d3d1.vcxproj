@@ -91,6 +91,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>c:\program files (x86)\microsoft visual studio\2017\community\common7\ide\extensions\4hhyuhoo.ghy\SDK\Native\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +109,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(ProjectDir)\engine\lib;$(ProjectDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\program files (x86)\microsoft visual studio\2017\community\common7\ide\extensions\4hhyuhoo.ghy\SDK\Native\inc;$(ProjectDir)\engine\lib;$(ProjectDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -127,6 +128,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>c:\program files (x86)\microsoft visual studio\2017\community\common7\ide\extensions\4hhyuhoo.ghy\SDK\Native\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -145,7 +147,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <ForcedIncludeFiles>StdAfx.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>$(ProjectDir)\engine\lib;$(ProjectDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>c:\program files (x86)\microsoft visual studio\2017\community\common7\ide\extensions\4hhyuhoo.ghy\SDK\Native\inc;$(ProjectDir)\engine\lib;$(ProjectDir)\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -190,7 +192,9 @@
     <ClInclude Include="engine\render\renderer\ICameraParamsProvider.h" />
     <ClInclude Include="engine\render\renderer\InputLayoutCache.h" />
     <ClInclude Include="engine\render\renderer\IRenderer.h" />
+    <ClInclude Include="engine\render\renderer\PassRenderer.h" />
     <ClInclude Include="engine\render\renderer\RenderOperation.h" />
+    <ClInclude Include="engine\render\renderer\RenderState.h" />
     <ClInclude Include="engine\render\renderer\SceneRenderer.h" />
     <ClInclude Include="engine\render\shader\ConstantBufferStruct.h" />
     <ClInclude Include="engine\render\shader\Shader.h" />
@@ -218,6 +222,7 @@
     <ClInclude Include="engine\utils\Frustum.h" />
     <ClInclude Include="engine\utils\Math.h" />
     <ClInclude Include="engine\utils\MeshGeneration.h" />
+    <ClInclude Include="engine\utils\Performance.h" />
     <ClInclude Include="game\Game.h" />
     <ClInclude Include="game\level\Level.h" />
     <ClInclude Include="game\objects\FollowCamera.h" />
@@ -252,6 +257,9 @@
     <ClCompile Include="engine\render\material\Material.cpp" />
     <ClCompile Include="engine\render\mesh\Mesh.cpp" />
     <ClCompile Include="engine\render\renderer\ConstantBufferManager.cpp" />
+    <ClCompile Include="engine\render\renderer\InputLayoutCache.cpp" />
+    <ClCompile Include="engine\render\renderer\PassRenderer.cpp" />
+    <ClCompile Include="engine\render\renderer\RenderState.cpp" />
     <ClCompile Include="engine\render\renderer\SceneRenderer.cpp" />
     <ClCompile Include="engine\render\shader\Shader.cpp" />
     <ClCompile Include="engine\render\shader\ShaderDefines.cpp" />
@@ -272,6 +280,7 @@
     <ClCompile Include="engine\system\Window.cpp" />
     <ClCompile Include="engine\utils\Math.cpp" />
     <ClCompile Include="engine\utils\MeshGeneration.cpp" />
+    <ClCompile Include="engine\utils\Performance.cpp" />
     <ClCompile Include="game\Game.cpp" />
     <ClCompile Include="game\level\Level.cpp" />
     <ClCompile Include="game\objects\FollowCamera.cpp" />

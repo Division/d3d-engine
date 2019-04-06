@@ -10,6 +10,7 @@
 #include "EngineTypes.h"
 #include "GameObject.h"
 #include "render/renderer/ICameraParamsProvider.h"
+#include "tbb/tbb.h"
 
 class Scene : public IGameObjectManager {
 public:
@@ -46,7 +47,7 @@ public:
   const auto &cameras() const { return _cameras; }
 
 protected:
-  Scene::Visibility &_getVisibilityForCamera(const std::shared_ptr<ICameraParamsProvider> &camera) const;
+  Scene::Visibility &_getVisibilityForCamera(const std::shared_ptr<ICameraParamsProvider> &camera, bool concurrent = false) const;
 
   // IGameObjectManager
   void addGameObject(GameObjectPtr object) override;
@@ -80,6 +81,7 @@ protected:
   std::vector<GameObjectPtr> _gameObjects; // Full list of scene game objects
   std::unordered_map<GameObjectID, TransformPtr>_rootTransformMap; // maps GameObject::id() to the top level transforms
   mutable std::unordered_map<std::shared_ptr<ICameraParamsProvider>, Scene::Visibility> _visibilityMap; // maps camera to a visible object list
+  mutable tbb::concurrent_queue<GameObjectPtr> _concurrentQueue; // visibility helper queue
   std::vector<GameObjectPtr> _startList;
 
   void _processAddedObject(GameObjectPtr object);

@@ -30,7 +30,7 @@ const std::unordered_map<int, int> INPUT_CONVERSION = {
     { (int)Key::G, 'G' },
     { (int)Key::Space, VK_SPACE },
     { (int)Key::Esc, VK_ESCAPE },
-    { (int)Key::Equal, '='},
+    { (int)Key::Equal, 187 },
     { (int)Key::Tab, VK_TAB},
     { (int)Key::MouseLeft, 0 },
     { (int)Key::MouseRight, 1 }

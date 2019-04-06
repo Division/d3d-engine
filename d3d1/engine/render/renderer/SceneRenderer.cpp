@@ -13,62 +13,52 @@
 #include "objects/LightObject.h"
 #include "objects/Projector.h"
 #include "render/texture/Texture.h"
+#include "PassRenderer.h"
+#include "tbb/tbb.h"
+#include "cvmarkersobj.h"
+
+Concurrency::diagnostic::marker_series markers_render(_T("render"));
 
 SceneRenderer::SceneRenderer() {
-	_constantBufferManager = std::make_unique<ConstantBufferManager>();
-	_inputLayoutCache = std::make_unique<InputLayoutCache>();
+	_constantBufferManager = std::make_shared<ConstantBufferManager>();
+	_inputLayoutCache = std::make_shared<InputLayoutCache>();
+	_mainCameraRenderer = std::make_unique<PassRenderer>(RenderMode::Normal, _inputLayoutCache);
+	_mainCameraRenderer->clearColor(true);
+	_mainCameraRenderer->clearDepth(false);
+	_depthPrePassRenderer = std::make_unique<PassRenderer>(RenderMode::DepthOnly, _inputLayoutCache);
+	_depthPrePassRenderer->clearColor(false);
+	_depthPrePassRenderer->clearDepth(true);
 }
 
 void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D) {
 	if (!camera) { return; }
-	_clearQueues();
+	
+	auto context = Engine::Get()->getD3DContext();
+	{
+		Concurrency::diagnostic::span s1(markers_render, _T("Multiple thread rendering"));
 
-	// Shadow casters
-	auto &visibleLights = scene->visibleLights(camera);
-	_shadowCasters.clear();
-	for (auto &light : visibleLights) {
-		if (light->castShadows()) {
-			_shadowCasters.push_back(std::static_pointer_cast<IShadowCaster>(light));
-		}
+		scene->visibleObjects(camera);
+
+		tbb::task_group g;
+		g.run([&] {
+			_mainCameraRenderer->render(scene, camera);
+		});
+		g.run([&] {
+			_depthPrePassRenderer->render(scene, camera);
+		});
+		g.wait();
 	}
 
-	auto &visibleProjectors = scene->visibleProjectors(camera);
-	for (auto &projector : visibleProjectors) {
-		if (projector->castShadows()) {
-			_shadowCasters.push_back(std::static_pointer_cast<IShadowCaster>(projector));
-		}
+	Concurrency::diagnostic::span s1(markers_render, _T("Command list execution"));
+
+	auto commandList = _depthPrePassRenderer->commandList();
+	if (commandList) {
+		context->ExecuteCommandList(commandList, false);
 	}
 
-	_constantBufferManager->addCamera(std::static_pointer_cast<ICameraParamsProvider>(camera));
-
-	//_shadowMap->setupShadowCasters(_shadowCasters);
-	//_renderer->setupBuffers(scene, camera, camera2D);
-	//_shadowMap->renderShadowMaps(_shadowCasters, scene);
-
-	auto visibleObjects = scene->visibleObjects(camera);
-	for (auto &object : visibleObjects) {
-		object->render(*this);
-	}
-
-	_prepareShaders();
-	_skinningRops.clear();
-
-	for (auto &queue : _queues) {
-		for (auto &rop : queue) {
-			if (rop.objectParams) {
-				_constantBufferManager->setObjectParamsBlock(&rop);
-			}
-			if (rop.skinningMatrices) {
-				_constantBufferManager->setSkinningMatricesBlock(&rop);
-			}
-		}
-	}
-
-	_constantBufferManager->upload();
-	_constantBufferManager->activateCamera(camera->cameraIndex());
-
-	for (auto &rop : _queues[(int)RenderQueue::Opaque]) {
-		_setupROP(rop);
+	commandList = _mainCameraRenderer->commandList();
+	if (commandList) {
+		context->ExecuteCommandList(commandList, false);
 	}
 }
 
@@ -85,62 +75,3 @@ void SceneRenderer::_prepareShaders() {
 	}
 }
 
-void SceneRenderer::addRenderOperation(RenderOperation &rop, RenderQueue queue) {
-	// TODO: CONCURRENCY
-
-	_queues[(int)queue].push_back(rop);
-	
-	// Using friend's private functions
-	if (rop.material && rop.material->_capsDirty) {
-		rop.material->_updateCaps();
-	}
-}
-
-void SceneRenderer::_setupROP(RenderOperation &rop) {
-	auto context = Engine::Get()->getD3DContext();
-	UINT stride = rop.mesh->strideBytes();
-	UINT offset = 0;
-
-	context->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	
-	_constantBufferManager->setObjectParams(rop.objectParamsBlockOffset);
-	if (rop.skinningMatrices) {
-		_constantBufferManager->setSkinningMatrices(rop.skinningOffset);
-	}
-
-	auto &material = rop.material;
-	if (material->_capsDirty) {
-		material->_updateCaps();
-	}
-
-	auto texture0 = material->texture0();
-	if (texture0) {
-		context->PSSetShaderResources(0, 1, texture0->resourcePointer());
-		context->PSSetSamplers(0, 1, texture0->samplerStatePointer());
-	}
-
-	auto &caps = rop.skinningMatrices ? material->shaderCapsSkinning() : material->shaderCaps();
-	auto shader = Engine::Get()->shaderGenerator()->getShaderWithCaps(caps);
-	auto layout = _inputLayoutCache->getLayout(rop.mesh, shader);
-	context->IASetInputLayout(layout);
-
-	shader->bind();
-
-	if (rop.mesh->hasVertices()) {
-		auto vertexBuffer = rop.mesh->vertexBuffer()->buffer();
-		context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	}
-
-	if (rop.mesh->hasIndices()) {
-		auto indexBuffer = rop.mesh->indexBuffer()->buffer();
-		context->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-		context->DrawIndexed(rop.mesh->indexCount(), 0, 0);
-	}
-	else {
-		context->Draw(rop.mesh->indexCount(), 0);
-	}
-}
-
-void SceneRenderer::renderMesh(MeshPtr mesh) {
-	
-}

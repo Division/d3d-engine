@@ -96,7 +96,6 @@ void Shader::loadFromFile(const std::string &filename, ShaderCapsSet caps) {
 void Shader::loadFromString(const char *shaderSource, size_t length, const std::string &filename, ShaderCapsSet caps) {
 	_initCaps(caps);
 
-	auto context = _provider->getD3DContext();
 	auto device = _provider->getD3DDevice();
 	
 	ID3DBlob *errors1, *errors2;
@@ -143,13 +142,15 @@ void Shader::loadFromString(const char *shaderSource, size_t length, const std::
 	}
 }
 
-void Shader::bind()
+void Shader::bind(ID3D11DeviceContext1 *context)
 {
 	if (!_ready) {
 		return;
 	}
 
-	auto context = _provider->getD3DContext();
+	if (!context) {
+		context = _provider->getD3DContext();
+	}
 	
 	// set the shader objects
 	context->VSSetShader(_vs, 0, 0);

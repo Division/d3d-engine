@@ -9,6 +9,8 @@
 #include "render/mesh/Mesh.h"
 #include "render/shader/Shader.h"
 #include "Engine.h"
+#include "tbb/tbb.h"
+
 
 class InputLayoutCache {
 public:
@@ -24,6 +26,8 @@ public:
 	ID3D11InputLayout *getLayout(const MeshPtr mesh, const ShaderPtr shader) const {
 		Key key = std::make_pair(mesh->vertexAttribSet().getBitmask(), shader->capsSet().getBitmask());
 		
+		tbb::spin_mutex::scoped_lock lock(Mutex);
+
 		auto iterator = _cache.find(key);
 		if (iterator != _cache.end()) {
 			return iterator->second;
@@ -86,5 +90,6 @@ private:
 	}
 
 private:
+	static tbb::spin_mutex Mutex;
 	mutable std::unordered_map<Key, ID3D11InputLayout *, KeyHasher> _cache;
 };

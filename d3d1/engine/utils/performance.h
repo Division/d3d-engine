@@ -10,9 +10,9 @@
 #include <string>
 #include <iostream>
 #include "system/Logging.h"
-#include "EngineMain.h"
+#include "Engine.h"
 #include "render/renderer/SceneRenderer.h"
-#include <chrono>
+#include "tbb/tick_count.h"
 
 namespace engine {
 
@@ -23,15 +23,19 @@ public:
     DepthPrePass,
     MainPass,
     SwapBuffers,
-//    Update,
+    UpdateTransform,
+	UpdateVisibility,
     LightGrid
   };
 
   static void initialize () {
+	_initialTime = tbb::tick_count::now();
     registerEntry("Frame", (int)Entry::Frame);
     registerEntry("DepthPrePass", (int)Entry::DepthPrePass);
     registerEntry("SwapBuffers", (int)Entry::SwapBuffers);
     registerEntry("MainPass", (int)Entry::MainPass);
+	registerEntry("UpdateTransform", (int)Entry::UpdateTransform);
+	registerEntry("UpdateVisibility", (int)Entry::UpdateVisibility);
 //    registerEntry("Update", (int)Entry::Update);
     registerEntry("LightGrid", (int)Entry::LightGrid);
   }
@@ -74,23 +78,23 @@ public:
     ENGLog("======== Performance ========");
     ENGLog("  [FPS] : %i", (int)_fps);
     for (auto &entry : _entries) {
-      ENGLog("  [%s] : %i", entry.second.name.c_str(), (int)entry.second.average);
+      ENGLog("  [%s] : %f", entry.second.name.c_str(), entry.second.average);
     }
 
-    ENGLog("Draw calls: %i", getEngine()->sceneRenderer()->ropCount());
+  //  ENGLog("Draw calls: %i", Engine::Get()->sceneRenderer()->ropCount());
   }
 
   static double getMilliseconds() {
-    auto now = std::chrono::system_clock::now().time_since_epoch();
-    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now);
-
-    return (double)ms.count();
+	 // return Engine::Get()->time() * 1000.0;
+    auto t = tbb::tick_count::now();
+	return (t - _initialTime).seconds() * 1000.0;
   }
 
 private:
   static double _fps;
   static double _lastUpdateTime;
   static bool _averagePrinted;
+  static tbb::tick_count _initialTime;
 
   static void _calculateAverages() {
     _averagePrinted = false;

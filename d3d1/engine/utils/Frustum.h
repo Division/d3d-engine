@@ -26,10 +26,14 @@ struct Frustum {
   }
 
   // AABB visibility check
-  bool isVisible(const vec3 &min, const vec3 &max) const {
+  bool isVisible(const vec3 &min, const vec3 &max, vec4 *planes = nullptr) const {
     if (count < 4) return false;
 
-    for (int i = start; i < start + count; i++) {
+	if (!planes) {
+		planes = &this->planes[start];
+	}
+
+    for (int i = 0; i < count; i++) {
       const vec3 &n = vec3(planes[i]);
       const float d = -planes[i].w;
 
@@ -51,6 +55,7 @@ struct Frustum {
 
   // OBB visibility check
   bool isVisible(const mat4 &matrix, const vec3 &min, const vec3 &max) const {
+	vec4 modifiedPlanes[5];
     start = count;
     // transform clip planes (relative)
     mat4 m = glm::inverse(matrix);
@@ -58,9 +63,9 @@ struct Frustum {
       vec4 &p = planes[i];
       vec4 o = m * vec4(vec3(p) * (-p.w), 1.0f);
       vec4 n = m * vec4(vec3(p), 0.0f);
-      planes[start + i] = vec4(vec3(n), -glm::dot(vec3(n), vec3(o)));
+	  modifiedPlanes[i] = vec4(vec3(n), -glm::dot(vec3(n), vec3(o)));
     }
-    bool visible = isVisible(min, max);
+    bool visible = isVisible(min, max, modifiedPlanes);
     start = 0;
     return visible;
   }

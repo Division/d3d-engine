@@ -12,6 +12,9 @@
 #include <windows.h>
 #include <Winerror.h>
 
+// Thread
+#include "tbb/tbb.h"
+
 // Math
 #define GLM_FORCE_LEFT_HANDED
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

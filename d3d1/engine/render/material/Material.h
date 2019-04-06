@@ -8,6 +8,7 @@
 class Material {
 public:
 	friend class SceneRenderer;
+	friend class PassRenderer;
 
 	Material() = default;
 

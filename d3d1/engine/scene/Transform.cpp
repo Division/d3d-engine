@@ -4,30 +4,46 @@
 
 #include "Transform.h"
 #include "GameObject.h"
+#include "tbb/tbb.h"
+
+void _updateTransformParallel () {
+
+}
 
 void Transform::_updateTransform(const mat4 *parentTransform, bool parentUpdated, bool skipChildren) const {
 
-  // Update local transform if needed
-  if (_dirty) {
-    _localMatrix = mat4();
-    _localMatrix = glm::translate(_localMatrix, _position);
-    _localMatrix *= mat4_cast(_rotation);
-    _localMatrix = glm::scale(_localMatrix, _scale);
-  }
+	// Update local transform if needed
+	if (_dirty) {
+		_localMatrix = mat4();
+		_localMatrix = glm::translate(_localMatrix, _position);
+		_localMatrix *= mat4_cast(_rotation);
+		_localMatrix = glm::scale(_localMatrix, _scale);
+	}
 
-  if (parentUpdated || _dirty) {
-    if (parentTransform) {
-      _worldMatrix = *parentTransform * _localMatrix;
-    } else {
-      _worldMatrix = _localMatrix;
-    }
-  }
+	if (parentUpdated || _dirty) {
+	if (parentTransform) {
+		_worldMatrix = *parentTransform * _localMatrix;
+	} else {
+		_worldMatrix = _localMatrix;
+	}
+	}
 
-  if (!skipChildren) {
-    for (auto &childTransform : _children) {
-      childTransform->_updateTransform(&_worldMatrix, _dirty || parentUpdated);
-    }
-  }
+	bool concurrency = true;
+	if (!skipChildren) {
+		if (concurrency) {
+			tbb::parallel_for(tbb::blocked_range<size_t>(size_t(0), _children.size(), size_t(1)), [&](const tbb::blocked_range<size_t>& r) {
+				for (size_t i = r.begin(); i != r.end(); i++) {
+					auto &childTransform = _children[i];
+					childTransform->_updateTransform(&_worldMatrix, _dirty || parentUpdated);
+				}
+			}, tbb::simple_partitioner());
+		}
+		else {
+			for (auto &childTransform : _children) {
+				childTransform->_updateTransform(&_worldMatrix, _dirty || parentUpdated);
+			}
+		}
+	}
 
   _dirty = false;
 }
