@@ -18,6 +18,7 @@ class Scene;
 class ShaderGenerator;
 class Window;
 class Input;
+class RenderTarget;
 
 class Engine : public ID3DContextProvider {
 public:
@@ -35,8 +36,13 @@ public:
 	const Input *input() const { return _input.get(); }
 	const Window *window() const { return _window.get(); }
 
-	ID3D11RenderTargetView *renderTargetView() const { return backbuffer; };
-	ID3D11DepthStencilView *depthStencilView() const { return depthStencil; };
+	RenderTargetPtr renderTarget() const { return _renderTarget; }
+	ID3D11RenderTargetView *renderTargetView() const;
+	ID3D11DepthStencilView *depthStencilView() const;
+
+
+//	ID3D11RenderTargetView *renderTargetView() const { return backbuffer; };
+//	ID3D11DepthStencilView *depthStencilView() const { return depthStencil; };
 
 	void render();
 	void renderScene(std::shared_ptr<Scene> scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D);
@@ -51,8 +57,8 @@ private:
 	IDXGISwapChain *swapchain;
 	ID3D11Device1 *dev;
 	ID3D11DeviceContext1 *context;         
-	ID3D11RenderTargetView *backbuffer;
-	ID3D11DepthStencilView *depthStencil;
+	//ID3D11RenderTargetView *backbuffer;
+	//ID3D11DepthStencilView *depthStencil;
 	ID3D11DepthStencilState *dsState;
 
 	ID3D11InputLayout *pLayout;            
@@ -61,6 +67,7 @@ private:
 	std::unique_ptr<Window> _window;
 	std::unique_ptr<SceneRenderer> _sceneRenderer;
 	std::unique_ptr<ShaderGenerator> _shaderGenerator;
+	RenderTargetPtr _renderTarget;
 
 	static Engine *_instance;
 	std::weak_ptr<IGame> _game;

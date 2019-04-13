@@ -225,9 +225,6 @@
     <ClInclude Include="engine\render\texture\TextureSlot.h">
       <Filter>engine\render\texture</Filter>
     </ClInclude>
-    <ClInclude Include="engine\render\texture\Texture.h">
-      <Filter>engine\render\texture</Filter>
-    </ClInclude>
     <ClInclude Include="engine\EngineImage.h">
       <Filter>engine</Filter>
     </ClInclude>
@@ -287,6 +284,15 @@
     </ClInclude>
     <ClInclude Include="engine\render\renderer\RenderState.h">
       <Filter>engine\render\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\texture\RenderTarget.h">
+      <Filter>engine\render\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\texture\Texture.h">
+      <Filter>engine\render\texture</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shading\ShadowMap.h">
+      <Filter>engine\render\shading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -398,9 +404,6 @@
     <ClCompile Include="engine\render\texture\SpriteSheet.cpp">
       <Filter>engine\render\texture</Filter>
     </ClCompile>
-    <ClCompile Include="engine\render\texture\Texture.cpp">
-      <Filter>engine\render\texture</Filter>
-    </ClCompile>
     <ClCompile Include="engine\EngineImage.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -451,6 +454,15 @@
     </ClCompile>
     <ClCompile Include="engine\render\renderer\InputLayoutCache.cpp">
       <Filter>engine\render\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\texture\RenderTarget.cpp">
+      <Filter>engine\render\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\texture\Texture.cpp">
+      <Filter>engine\render\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\shading\ShadowMap.cpp">
+      <Filter>engine\render\shading</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

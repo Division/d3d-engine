@@ -204,6 +204,8 @@
     <ClInclude Include="engine\render\shader\ShaderResource.h" />
     <ClInclude Include="engine\render\shader\VertexInput.h" />
     <ClInclude Include="engine\render\shading\IShadowCaster.h" />
+    <ClInclude Include="engine\render\shading\ShadowMap.h" />
+    <ClInclude Include="engine\render\texture\RenderTarget.h" />
     <ClInclude Include="engine\render\texture\SpriteSheet.h" />
     <ClInclude Include="engine\render\texture\Texture.h" />
     <ClInclude Include="engine\render\texture\TextureSlot.h" />
@@ -266,6 +268,8 @@
     <ClCompile Include="engine\render\shader\ShaderGenerator.cpp" />
     <ClCompile Include="engine\render\shader\ShaderResource.cpp" />
     <ClCompile Include="engine\render\shader\VertexInput.cpp" />
+    <ClCompile Include="engine\render\shading\ShadowMap.cpp" />
+    <ClCompile Include="engine\render\texture\RenderTarget.cpp" />
     <ClCompile Include="engine\render\texture\SpriteSheet.cpp" />
     <ClCompile Include="engine\render\texture\Texture.cpp" />
     <ClCompile Include="engine\resources\HierarchyData.cpp" />

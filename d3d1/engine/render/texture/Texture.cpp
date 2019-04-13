@@ -10,27 +10,35 @@ void Texture::_uploadData() {
 
 }
 
-void Texture::initTexture2D(int32_t width, int32_t height, int32_t channels, bool sRGB, void *data, bool mipmaps) {
-
-  DXGI_FORMAT format;
-  format = sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
-  /*switch (channels) {
-    case 4:
-	  format = sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
-      break;
-
-    case 3:
-	  format = sRGB ? DXGI_FORMAT_R8G8B: DXGI_FORMAT_R8G8B8_UNORM;
-      break;
-
-    default:
-      throw std::runtime_error("Invalid texture channel number");
-  }*/
-
-  this->initTexture2D(width, height, format, data, mipmaps);
+void Texture::_release() {
+	SafeRelease(&_texture);
+	SafeRelease(&_textureView);
+	SafeRelease(&_samplerState);
 }
 
-void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *data, bool mipmaps) {
+void Texture::initTexture2D(int32_t width, int32_t height, int32_t channels, bool sRGB, void *data, bool mipmaps) {
+
+	DXGI_FORMAT format;
+	format = sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
+	/*switch (channels) {
+	  case 4:
+		format = sRGB ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+
+	  case 3:
+		format = sRGB ? DXGI_FORMAT_R8G8B: DXGI_FORMAT_R8G8B8_UNORM;
+		break;
+
+	  default:
+		throw std::runtime_error("Invalid texture channel number");
+	}*/
+
+	this->initTexture2D(width, height, format, data, mipmaps);
+}
+
+void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *data, bool mipmaps, UINT bindFlags) {
+	_release();
+
 	// Texture
 	D3D11_SUBRESOURCE_DATA textureSubresourceData;
 	ZeroMemory(&textureSubresourceData, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -51,12 +59,25 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.SampleDesc.Quality = 0;
 
-	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc.BindFlags = bindFlags;
+
+	/*D3D11_TEXTURE2D_DESC descDepth;
+	descDepth.Width = width;
+	descDepth.Height = height;
+	descDepth.MipLevels = 1;
+	descDepth.ArraySize = 1;
+	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	descDepth.SampleDesc.Count = 1;
+	descDepth.SampleDesc.Quality = 0;
+	descDepth.Usage = D3D11_USAGE_DEFAULT;
+	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	descDepth.CPUAccessFlags = 0;
+	descDepth.MiscFlags = 0;*/
 
 	ThrowIfFailed(
 		Engine::Get()->getD3DDevice()->CreateTexture2D(
 			&textureDesc,
-			&textureSubresourceData,
+			data ? &textureSubresourceData : nullptr,
 			&_texture
 		)
 	);
@@ -91,20 +112,27 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 
 	ThrowIfFailed(
-		Engine::Get()->getD3DDevice()->CreateShaderResourceView(
-			_texture,
-			&textureViewDesc,
-			&_textureView
+		Engine::Get()->getD3DDevice()->CreateSamplerState(
+			&samplerDesc,
+			&_samplerState
 		)
 	);
+
+	if (bindFlags & D3D11_BIND_SHADER_RESOURCE) {
+		ThrowIfFailed(
+			Engine::Get()->getD3DDevice()->CreateShaderResourceView(
+				_texture,
+				&textureViewDesc,
+				&_textureView
+			)
+		);
+	}
 
 	ENGLog("TEXTURE 2D LOADED, %ix%i", width, height);
 }
 
 Texture::~Texture() {
-	SafeRelease(&_texture);
-	SafeRelease(&_textureView);
-	SafeRelease(&_samplerState);
+	_release();
 }
 
 /*void Texture::bind(GLenum unit) const {

@@ -55,8 +55,8 @@ typedef std::shared_ptr<SpriteSheet> SpriteSheetPtr;
 class SwappableFrameBufferObject;
 typedef std::shared_ptr<SwappableFrameBufferObject> SwappableFrameBufferObjectPtr;
 
-class FrameBufferObject;
-typedef std::shared_ptr<FrameBufferObject> FrameBufferObjectPtr;
+class RenderTarget;
+typedef std::shared_ptr<RenderTarget> RenderTargetPtr;
 
 class ICameraParamsProvider;
 typedef std::shared_ptr<ICameraParamsProvider> ICameraParamsProviderPtr;
@@ -66,6 +66,9 @@ typedef std::shared_ptr<HierarchyData> HierarchyDataPtr;
 
 class GameObject;
 typedef std::shared_ptr<GameObject> GameObjectPtr;
+
+class PassRenderer;
+typedef std::shared_ptr<PassRenderer> PassRendererPtr;
 
 #endif //CPPWRAPPER_ENGTYPES_H
 

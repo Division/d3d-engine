@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <map>
+
 enum class ShaderResourceName : uint32_t {
 	Texture0,
 	Texture1,

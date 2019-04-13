@@ -5,6 +5,7 @@
 #include "IRenderer.h"	
 #include "ICameraParamsProvider.h"
 #include "RenderOperation.h"
+#include "EngineTypes.h"
 
 class PassConstantBufferManager;
 class InputLayoutCache;
@@ -13,7 +14,7 @@ class RenderState;
 
 class PassRenderer : public IRenderer {
 public:
-	PassRenderer(RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache);
+	PassRenderer(RenderTargetPtr renderTarget, RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache);
 
 	ID3D11CommandList* commandList() const { return _commandList; }
 
@@ -51,6 +52,7 @@ private:
 private:
 	std::unique_ptr<PassConstantBufferManager> _constantBufferManager;
 	std::unique_ptr<RenderState> _renderState;
+	RenderTargetPtr _renderTarget;
 	std::shared_ptr<InputLayoutCache> _inputLayoutCache;
 	ID3D11DeviceContext1 *_deferredContext;
 	ID3D11CommandList* _commandList = nullptr;

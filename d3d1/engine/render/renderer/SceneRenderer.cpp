@@ -22,10 +22,10 @@ Concurrency::diagnostic::marker_series markers_render(_T("render"));
 SceneRenderer::SceneRenderer() {
 	_constantBufferManager = std::make_shared<ConstantBufferManager>();
 	_inputLayoutCache = std::make_shared<InputLayoutCache>();
-	_mainCameraRenderer = std::make_unique<PassRenderer>(RenderMode::Normal, _inputLayoutCache);
+	_mainCameraRenderer = std::make_unique<PassRenderer>(Engine::Get()->renderTarget(), RenderMode::Normal, _inputLayoutCache);
 	_mainCameraRenderer->clearColor(true);
 	_mainCameraRenderer->clearDepth(false);
-	_depthPrePassRenderer = std::make_unique<PassRenderer>(RenderMode::DepthOnly, _inputLayoutCache);
+	_depthPrePassRenderer = std::make_unique<PassRenderer>(Engine::Get()->renderTarget(), RenderMode::DepthOnly, _inputLayoutCache);
 	_depthPrePassRenderer->clearColor(false);
 	_depthPrePassRenderer->clearDepth(true);
 }

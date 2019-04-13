@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "ConstantBufferManager.h"
 #include "InputLayoutCache.h"
+#include "render/texture/RenderTarget.h"
 #include "render/material/Material.h"
 #include "render/texture/Texture.h"
 #include "render/mesh/Mesh.h"
@@ -16,8 +17,8 @@
 
 tbb::spin_mutex MaterialMutex;
 
-PassRenderer::PassRenderer(RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache) :
-						   _inputLayoutCache(inputLayoutCache), _mode(mode) {
+PassRenderer::PassRenderer(RenderTargetPtr renderTarget, RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache) :
+						   _renderTarget(renderTarget), _inputLayoutCache(inputLayoutCache), _mode(mode) {
 
 	auto device = Engine::Get()->getD3DDevice();
 	device->CreateDeferredContext1(0, &_deferredContext);
@@ -62,13 +63,13 @@ void PassRenderer::render(ScenePtr scene, ICameraParamsProviderPtr camera) {
 
 	_deferredContext->RSSetViewports(1, &viewport);
 
-	const float color[4] = { 1.0f, 0.2f, 0.4f, 1.0f };
-	// clear the back buffer to a deep blue
 	auto engine = Engine::Get();
-	auto renderTarget = engine->renderTargetView();
-	auto depthStencil = engine->depthStencilView();
-	_deferredContext->OMSetRenderTargets(1, &renderTarget, depthStencil);
+	auto renderTarget = _renderTarget->renderTargetView();
+	auto depthStencil = _renderTarget->depthStencilView();
+	_renderTarget->activate(_deferredContext);
+
 	if (_clearColor) {
+		const float color[4] = { 1.0f, 0.2f, 0.4f, 1.0f };
 		_deferredContext->ClearRenderTargetView(renderTarget, color);
 	}
 	if (_clearDepth) {
