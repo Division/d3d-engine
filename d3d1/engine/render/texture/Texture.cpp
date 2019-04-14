@@ -61,19 +61,6 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 
 	textureDesc.BindFlags = bindFlags;
 
-	/*D3D11_TEXTURE2D_DESC descDepth;
-	descDepth.Width = width;
-	descDepth.Height = height;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;*/
-
 	ThrowIfFailed(
 		Engine::Get()->getD3DDevice()->CreateTexture2D(
 			&textureDesc,
