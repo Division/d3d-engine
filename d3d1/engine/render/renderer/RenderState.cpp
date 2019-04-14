@@ -1,25 +1,27 @@
 ﻿#include "RenderState.h"
 #include "Engine.h"
+#include "render/texture/RenderTarget.h"
 
-RenderState::RenderState(ID3D11DeviceContext1 *context) : _context(context) {
+RenderState::RenderState(ID3D11DeviceContext1 *context, RenderTargetPtr renderTarget) 
+		: _context(context), _renderTarget(renderTarget) {
 	_depthOnlyState = _createDepthStencilState(true, true, D3D11_COMPARISON_LESS);
 	_depthNormalState = _createDepthStencilState(true, false, D3D11_COMPARISON_LESS_EQUAL);
 }
 
 void RenderState::setRenderMode(RenderMode mode)
 {
-	auto engine = Engine::Get();
-	auto renderTarget = engine->renderTargetView();
-	auto depthStencil = engine->depthStencilView();
+	//auto engine = Engine::Get();
+	//auto renderTarget = engine->renderTargetView();
+	//auto depthStencil = engine->depthStencilView();
 
 	switch (mode) {
 	case RenderMode::DepthOnly:
-		_context->OMSetRenderTargets(0, NULL, depthStencil);
+		_renderTarget->activate(_context, false, true);
 		_context->OMSetDepthStencilState(_depthOnlyState, 1);
 		break;
 
 	case RenderMode::Normal:
-		_context->OMSetRenderTargets(1, &renderTarget, depthStencil);
+		_renderTarget->activate(_context, true, true);
 		_context->OMSetDepthStencilState(_depthNormalState, 1);
 		break;
 

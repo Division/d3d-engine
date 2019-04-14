@@ -14,7 +14,7 @@ public:
 	TexturePtr framebufferTexture() const { return _colorTexture; }
 	TexturePtr depthTexture() const { return _depthTexture; }
 
-	void activate(ID3D11DeviceContext1 *context);
+	void activate(ID3D11DeviceContext1 *context, bool color = true, bool depth = true);
 
 private:
 	void _recreateTextures();

@@ -23,7 +23,7 @@ PassRenderer::PassRenderer(RenderTargetPtr renderTarget, RenderMode mode, std::s
 	auto device = Engine::Get()->getD3DDevice();
 	device->CreateDeferredContext1(0, &_deferredContext);
 	_constantBufferManager = std::make_unique<PassConstantBufferManager>(_deferredContext);
-	_renderState = std::make_unique<RenderState>(_deferredContext);
+	_renderState = std::make_unique<RenderState>(_deferredContext, renderTarget);
 }
 
 void PassRenderer::_clearQueues() {
@@ -49,6 +49,7 @@ void PassRenderer::renderMesh(MeshPtr mesh) {
 void PassRenderer::render(ScenePtr scene, ICameraParamsProviderPtr camera) {
 	if (!camera) { return; }
 	_clearQueues();
+	_renderState->setRenderMode(_mode);
 
 	auto cameraViewport = camera->cameraViewport();
 	D3D11_VIEWPORT viewport;
@@ -66,7 +67,6 @@ void PassRenderer::render(ScenePtr scene, ICameraParamsProviderPtr camera) {
 	auto engine = Engine::Get();
 	auto renderTarget = _renderTarget->renderTargetView();
 	auto depthStencil = _renderTarget->depthStencilView();
-	_renderTarget->activate(_deferredContext);
 
 	if (_clearColor) {
 		const float color[4] = { 1.0f, 0.2f, 0.4f, 1.0f };
@@ -76,27 +76,7 @@ void PassRenderer::render(ScenePtr scene, ICameraParamsProviderPtr camera) {
 		_deferredContext->ClearDepthStencilView(depthStencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
 
-	// Shadow casters
-	auto &visibleLights = scene->visibleLights(camera);
-	_shadowCasters.clear();
-	for (auto &light : visibleLights) {
-		if (light->castShadows()) {
-			_shadowCasters.push_back(std::static_pointer_cast<IShadowCaster>(light));
-		}
-	}
-
-	auto &visibleProjectors = scene->visibleProjectors(camera);
-	for (auto &projector : visibleProjectors) {
-		if (projector->castShadows()) {
-			_shadowCasters.push_back(std::static_pointer_cast<IShadowCaster>(projector));
-		}
-	}
-
 	_constantBufferManager->addCamera(std::static_pointer_cast<ICameraParamsProvider>(camera));
-
-	//_shadowMap->setupShadowCasters(_shadowCasters);
-	//_renderer->setupBuffers(scene, camera, camera2D);
-	//_shadowMap->renderShadowMaps(_shadowCasters, scene);
 
 	auto visibleObjects = scene->visibleObjects(camera);
 	for (auto &object : visibleObjects) {
@@ -120,8 +100,6 @@ void PassRenderer::render(ScenePtr scene, ICameraParamsProviderPtr camera) {
 }
 
 void PassRenderer::_renderQueues(RenderMode mode) {
-	_renderState->setRenderMode(mode);
-
 	for (auto &rop : _queues[(int)RenderQueue::Opaque]) {
 		_renderRop(rop, mode);
 	}

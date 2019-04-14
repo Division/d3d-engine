@@ -16,10 +16,13 @@ class InputLayoutCache;
 
 class ShadowMap {
 public:
-  ShadowMap(unsigned int resolutionX, unsigned int resolutionY, std::shared_ptr<InputLayoutCache> inputLayoutCache);
+	ShadowMap(unsigned int resolutionX, unsigned int resolutionY, std::shared_ptr<InputLayoutCache> inputLayoutCache);
 
-  void setupShadowCasters(const std::vector<IShadowCasterPtr> &shadowCasters);
-  void renderShadowMaps(const std::vector<IShadowCasterPtr> &shadowCasters, const ScenePtr &scene);
+	void setupRenderPasses(const std::vector<IShadowCasterPtr> &shadowCasters);
+	void renderShadowMaps(const std::vector<IShadowCasterPtr> &shadowCasters, const ScenePtr &scene);
+	PassRendererPtr *renderPasses() const { return const_cast<PassRendererPtr *>(_renderers.data()); }
+	int32_t renderPassCount() const { return _shadowCasterCount; }
+	void execute(ID3D11DeviceContext *immediateContext) const;
 
   TexturePtr depthAtlas();
 private:
@@ -31,6 +34,7 @@ private:
   std::vector<PassRendererPtr> _renderers;
   std::shared_ptr<InputLayoutCache> _inputLayoutCache;
   uint32_t _shadowmapBlock;
+  int32_t _shadowCasterCount;
 
 private:
   Rect getCellPixelRect(unsigned int index);

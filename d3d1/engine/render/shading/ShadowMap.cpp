@@ -2,12 +2,14 @@
 // Created by Sidorenko Nikita on 2018-11-28.
 //
 
+#include "Engine.h"
 #include "ShadowMap.h"
 #include "IShadowCaster.h"
 #include "render/renderer/PassRenderer.h"
 #include "render/shader/ShaderDefines.h"
 #include "render/texture/RenderTarget.h"
 #include "render/renderer/InputLayoutCache.h"
+#include "tbb/tbb.h"
 
 const unsigned int CELL_COUNT = 4;
 const auto MAX_MAPS = CELL_COUNT * CELL_COUNT;
@@ -24,49 +26,55 @@ ShadowMap::ShadowMap(unsigned int resolutionX, unsigned int resolutionY, std::sh
   _shadowmapBlock = SHADER_SAMPLER_REGISTERS.at(ShaderResourceName::ShadowMap);
 }
 
-void ShadowMap::setupShadowCasters(const std::vector<IShadowCasterPtr> &shadowCasters) {
-  unsigned int index = 0;
-  for (auto &caster : shadowCasters) {
-    if (index >= MAX_MAPS) {
-      caster->viewport(vec4(0,0,0,0));
-      continue;
-    }
+void ShadowMap::setupRenderPasses(const std::vector<IShadowCasterPtr> &shadowCasters) {
+	unsigned int index = 0;
 
-    vec4 viewport = (vec4)getCellPixelRect(index);
-    caster->viewport(viewport);
-    index++;
-  }
+	for (auto &caster : shadowCasters) {
+		if (index >= MAX_MAPS) {
+			caster->viewport(vec4(0,0,0,0));
+			continue;
+		}
+
+		vec4 viewport = (vec4)getCellPixelRect(index);
+		caster->viewport(viewport);
+		index++;
+	}
+
+	_shadowCasterCount = index;
+
+	if (_renderers.size() < _shadowCasterCount) {
+		for (int i = _renderers.size(); i < _shadowCasterCount; i++) {
+			auto renderer = std::make_shared<PassRenderer>(
+				_depthAtlas,
+				RenderMode::DepthOnly,
+				_inputLayoutCache
+			);
+			renderer->clearColor(false);
+			renderer->clearDepth(false);
+			_renderers.push_back(renderer);
+		}
+	}
+
+	_depthAtlas->activate(Engine::Get()->getD3DContext());
+	Engine::Get()->getD3DContext()->ClearDepthStencilView(_depthAtlas->depthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void ShadowMap::renderShadowMaps(const std::vector<IShadowCasterPtr> &shadowCasters, const ScenePtr &scene) {
- /* _depthAtlas->depthBuffer()->bind(_shadowmapBlock);
-  _depthAtlas->bind();
-  glDepthMask(GL_TRUE);
-  glClear(GL_DEPTH_BUFFER_BIT);
-  glCullFace(GL_BACK);
-
-  auto pass = std::make_shared<RenderPass>();
-  pass->mode(RenderMode::DepthOnly);
-
-  unsigned int index = 0;
-  for (auto &caster : shadowCasters) {
-    if (index >= MAX_MAPS) {
-      caster->viewport(vec4(0,0,0,0));
-      continue;
-    }
-
-    vec4 viewport = (vec4)getCellPixelRect(index);
-    caster->viewport(viewport);
-    pass->camera(caster);
-    _renderer->clearQueues();
-    _renderer->populateQueues(scene, caster);
-    _renderer->renderScene(pass);
-    index++;
-  }
-
-  glCullFace(GL_BACK);
-  _depthAtlas->unbind(); */
+	for (int i = 0; i < _shadowCasterCount; i++) {
+		_renderers[i]->render(scene, shadowCasters[i]);
+	}
 }
+
+void ShadowMap::execute(ID3D11DeviceContext *immediateContext) const
+{
+	for (int i = 0; i < _shadowCasterCount; i++) {
+		auto commandList = _renderers[i]->commandList();
+		if (commandList) {
+			immediateContext->ExecuteCommandList(commandList, false);
+		}
+	}
+}
+
 
 Rect ShadowMap::getCellPixelRect(unsigned int index) {
   unsigned int x = index % CELL_COUNT * (_cellPixelSize.x + _pixelSpacing);
@@ -83,6 +91,7 @@ Rect ShadowMap::getCellRect(unsigned int index) {
 
   return Rect(origin.x, origin.y, _cellSize.x, _cellSize.y);
 }
+
 
 TexturePtr ShadowMap::depthAtlas() {
   return _depthAtlas->depthTexture();

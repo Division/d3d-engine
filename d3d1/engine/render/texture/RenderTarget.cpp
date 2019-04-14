@@ -53,9 +53,12 @@ void RenderTarget::_recreateTextures()
 	}
 }
 
-void RenderTarget::activate(ID3D11DeviceContext1 *context)
+void RenderTarget::activate(ID3D11DeviceContext1 *context, bool color, bool depth)
 {
-	UINT number = _hasColor ? 1 : 0;
-	ID3D11RenderTargetView *colorTarget = _hasColor ? _renderTargetView : nullptr;
-	context->OMSetRenderTargets(number, &colorTarget, _depthStencilView);
+	bool hasColor = color && _hasColor;
+	bool hasDepth = depth && _hasDepth;
+	UINT number = hasColor ? 1 : 0;
+	ID3D11RenderTargetView *colorTarget = hasColor ? _renderTargetView : nullptr;
+	ID3D11DepthStencilView *depthStencilView = hasDepth ? _depthStencilView : nullptr;
+	context->OMSetRenderTargets(number, &colorTarget, depthStencilView);
 }
