@@ -47,6 +47,6 @@ protected:
 	bool _hasNormalMap = false;
 	TexturePtr _normalMap;
 
-	bool _lightingEnabled = false;
+	bool _lightingEnabled = true;
 	bool _vertexColorEnabled = false;
 };

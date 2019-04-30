@@ -10,6 +10,7 @@ class InputLayoutCache;
 class IShadowCaster;
 class PassRenderer;
 class ShadowMap;
+class LightGrid;
 
 class SceneRenderer {
 public:
@@ -28,6 +29,7 @@ private:
 	std::unique_ptr<PassRenderer> _mainCameraRenderer;
 	std::unique_ptr<PassRenderer> _depthPrePassRenderer;
 	std::unique_ptr<ShadowMap> _shadowMap;
+	std::shared_ptr<LightGrid> _lightGrid;
 	std::shared_ptr<ConstantBufferManager> _constantBufferManager;
 	std::shared_ptr<InputLayoutCache> _inputLayoutCache;
 	//InputLayoutCache *_inputLayoutCache;

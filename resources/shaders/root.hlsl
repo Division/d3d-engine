@@ -16,7 +16,7 @@ struct VIn {
 struct VOut
 {
     float4 position : SV_POSITION;
-#if defined(ATTRIB_TEXCOORD0)
+#if defined (ATTRIB_TEXCOORD0)
     float2 texCoord0 : TEXCOORD;
 #endif
 };
@@ -66,6 +66,18 @@ VOut VShader(VIn input) {
     return output;
 }
 
+#if defined (IS_PIXEL)
+
+#if defined (RESOURCE_LIGHT_GRID)
+struct LightGrid {
+    uint offset;
+    uint lightsCount;
+    uint projectorsCount;
+};
+
+StructuredBuffer<LightGrid> lightGridBuffer : register(t3);
+#endif
+
 Texture2D texture0 : register(t0);
 Texture2D shaderTexture : register(t0);
 SamplerState SampleType;
@@ -80,7 +92,31 @@ float4 PShader(VOut input) : SV_TARGET
     result = textureColor;
 #endif
 
+#if defined (RESOURCE_LIGHT_GRID)
+    float TILE_SIZE = 32.0;
+    float2 screenSize = float2(cameraScreenSize);
+    int2 tilesCount = int2(ceil(screenSize / TILE_SIZE));
+    float2 pixelCoord = float2(input.position.x, screenSize.y - input.position.y);
+    int tileX = int(floor(pixelCoord.x / TILE_SIZE));
+    int tileY = int(floor(pixelCoord.y / TILE_SIZE));
+
+    int tileIndex = tileX + tilesCount.x * tileY;
+    LightGrid gridItem = lightGridBuffer[tileIndex];
+
+    uint lightOffset = gridItem.offset;
+    uint pointLightCount = gridItem.lightsCount & 0x000fffu;
+    uint spotLightCount = gridItem.lightsCount >> 16;
+
+    uint decalCount = gridItem.projectorsCount & 0x000fffu;
+    uint projectorCount = gridItem.projectorsCount >> 16;
+
+    //result = float4(pixelCoord.x / 800.0, 0, 0, 1);
+    result += float4(0.2 * pointLightCount, 0.2 * (decalCount + projectorCount), 0, 0);
+#endif
+
     float gamma = 2.2;
     result.rgb = pow(result.rgb, 1.0/gamma);
     return result;
 }
+
+#endif

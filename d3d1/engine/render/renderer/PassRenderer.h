@@ -11,10 +11,11 @@ class PassConstantBufferManager;
 class InputLayoutCache;
 class IShadowCaster;
 class RenderState;
+class LightGrid;
 
 class PassRenderer : public IRenderer {
 public:
-	PassRenderer(RenderTargetPtr renderTarget, RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache);
+	PassRenderer(RenderTargetPtr renderTarget, std::shared_ptr<LightGrid> lightGrid, RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache);
 
 	ID3D11CommandList* commandList() const { return _commandList; }
 
@@ -50,6 +51,7 @@ private:
 	mutable std::vector<std::shared_ptr<IShadowCaster>> _shadowCasters;
 
 private:
+	std::shared_ptr<LightGrid> _lightGrid;
 	std::unique_ptr<PassConstantBufferManager> _constantBufferManager;
 	std::unique_ptr<RenderState> _renderState;
 	RenderTargetPtr _renderTarget;

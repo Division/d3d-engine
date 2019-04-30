@@ -121,14 +121,3 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 Texture::~Texture() {
 	_release();
 }
-
-/*void Texture::bind(GLenum unit) const {
-  glActiveTexture(GL_TEXTURE0 + unit);
-  glBindTexture(_target, _id);
-}
-
-void Texture::unbind(GLenum unit) const {
-  glActiveTexture(GL_TEXTURE0 + unit);
-  glBindTexture(_target, 0);
-}*/
-

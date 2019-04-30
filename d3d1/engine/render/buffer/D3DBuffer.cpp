@@ -6,19 +6,15 @@
 #include <stdexcept>
 #include "system/Logging.h"
 #include "core/ID3DContextProvider.h"
+#include "Engine.h"
 
 const int ALIGN_BYTES = 4;
 
-D3DBuffer::D3DBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, uint32_t size, void *data)
-	: _provider(provider), _bindFlag(bindFlag), _usage(usage), _size(size) {
+D3DBuffer::D3DBuffer(ID3DContextProvider *provider, D3D11_BUFFER_DESC bufferDesc, uint32_t size, void *data)
+	: _provider(provider), _size(size) {
 
-	D3D11_BUFFER_DESC bufferDesc;
-	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-
-	bufferDesc.Usage = _usage;
-	bufferDesc.ByteWidth = _size;
-	bufferDesc.BindFlags = _bindFlag;
-	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	_provider = provider;
+	_size = size;
 
 	// Fill in the subresource data.
 	D3D11_SUBRESOURCE_DATA initData;
@@ -28,9 +24,31 @@ D3DBuffer::D3DBuffer(ID3DContextProvider *provider, D3D11_BIND_FLAG bindFlag, D3
 
 	auto device = _provider->getD3DDevice();
 	auto result = device->CreateBuffer(&bufferDesc, data ? &initData : nullptr, &_buffer);
-	if (FAILED(result)) {
-		ENGLog("[ERROR] Can't create buffer");
-	}
+	ThrowIfFailed(result);
+}
+
+D3DBuffer::D3DBuffer(ID3DContextProvider *provider, uint32_t bindFlag, D3D11_USAGE usage, uint32_t size, void *data, uint32_t miscFlags, uint32_t stride)
+	: _provider(provider), _bindFlag(bindFlag), _usage(usage), _size(size), _miscFlags(miscFlags), _stride(stride) {
+
+	D3D11_BUFFER_DESC bufferDesc;
+	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
+
+	bufferDesc.Usage = _usage;
+	bufferDesc.ByteWidth = _size;
+	bufferDesc.BindFlags = _bindFlag;
+	bufferDesc.MiscFlags = _miscFlags;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.StructureByteStride = _stride;
+
+	// Fill in the subresource data.
+	D3D11_SUBRESOURCE_DATA initData;
+	initData.pSysMem = data;
+	initData.SysMemPitch = 0;
+	initData.SysMemSlicePitch = 0;
+
+	auto device = _provider->getD3DDevice();
+	auto result = device->CreateBuffer(&bufferDesc, data ? &initData : nullptr, &_buffer);
+	ThrowIfFailed(result);
 }
 
 D3DBuffer::~D3DBuffer() {

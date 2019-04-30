@@ -46,3 +46,6 @@ const std::map<ShaderCaps, std::string> SHADER_CAPS_DEFINES = {
   { ShaderCaps::ProjectedTexture, "CAP_PROJECTED_TEXTURE" },
   { ShaderCaps::Skinning, "CAP_SKINNING" }
 };
+
+const std::string SHADER_IS_VERTEX = "IS_VERTEX";
+const std::string SHADER_IS_PIXEL = "IS_PIXEL";

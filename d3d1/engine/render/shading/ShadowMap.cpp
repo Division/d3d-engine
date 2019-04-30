@@ -46,6 +46,7 @@ void ShadowMap::setupRenderPasses(const std::vector<IShadowCasterPtr> &shadowCas
 		for (int i = _renderers.size(); i < _shadowCasterCount; i++) {
 			auto renderer = std::make_shared<PassRenderer>(
 				_depthAtlas,
+				nullptr,
 				RenderMode::DepthOnly,
 				_inputLayoutCache
 			);

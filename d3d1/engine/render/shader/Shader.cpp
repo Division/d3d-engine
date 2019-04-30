@@ -11,7 +11,6 @@
 
 Shader::Shader(ID3DContextProvider *provider) : _provider(provider) {}
 
-
 struct ShaderConfig {
 	std::vector<ShaderResourceName> resources;
 	std::vector<ConstantBufferName> constantBuffers;
@@ -59,7 +58,7 @@ void Shader::_initCaps(const ShaderCapsSet caps) {
 	}
 }
 
-std::vector<D3D_SHADER_MACRO> Shader::_getDefinesForCaps(const ShaderCapsSet &caps) {
+std::vector<D3D_SHADER_MACRO> Shader::_getDefinesForCaps(const ShaderCapsSet &caps, const std::vector<const char *> additionalDefines) {
 	std::vector<D3D_SHADER_MACRO> result;
 
 	for (auto attrib : _attribSet.caps()) {
@@ -76,6 +75,10 @@ std::vector<D3D_SHADER_MACRO> Shader::_getDefinesForCaps(const ShaderCapsSet &ca
 		}
 
 		result.push_back({ SHADER_CAPS_DEFINES.at((ShaderCaps)cap).c_str(), "1" });
+	}
+
+	for (auto &additional : additionalDefines) {
+		result.push_back({ additional, "1" });
 	}
 
 	result.push_back({ 0, 0 }); // null last element
@@ -100,9 +103,10 @@ void Shader::loadFromString(const char *shaderSource, size_t length, const std::
 	
 	ID3DBlob *errors1, *errors2;
 
-	auto defines = _getDefinesForCaps(caps);
-	auto result1 = D3DCompile(shaderSource, length, NULL, &defines[0], NULL, "VShader", "vs_4_0", 0, 0, &_vsBlob, &errors1);
-	auto result2 = D3DCompile(shaderSource, length, NULL, &defines[0], NULL, "PShader", "ps_4_0", 0, 0, &_psBlob, &errors2);
+	auto definesVertex = _getDefinesForCaps(caps, { SHADER_IS_VERTEX.c_str() });
+	auto definesPixel = _getDefinesForCaps(caps, { SHADER_IS_PIXEL.c_str() });
+	auto result1 = D3DCompile(shaderSource, length, NULL, &definesVertex[0], NULL, "VShader", "vs_5_0", 0, 0, &_vsBlob, &errors1);
+	auto result2 = D3DCompile(shaderSource, length, NULL, &definesPixel[0], NULL, "PShader", "ps_5_0", 0, 0, &_psBlob, &errors2);
 
 	_error = false;
 	if (FAILED(result1)) {

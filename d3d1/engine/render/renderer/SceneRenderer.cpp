@@ -15,6 +15,7 @@
 #include "objects/Projector.h"
 #include "render/texture/Texture.h"
 #include "PassRenderer.h"
+#include "render/shading/LightGrid.h"
 #include "tbb/tbb.h"
 #include "cvmarkersobj.h"
 
@@ -26,10 +27,11 @@ SceneRenderer::SceneRenderer() {
 	_constantBufferManager = std::make_shared<ConstantBufferManager>();
 	_inputLayoutCache = std::make_shared<InputLayoutCache>();
 	_shadowMap = std::make_unique<ShadowMap>(SHADOW_ATLAS_SIZE, SHADOW_ATLAS_SIZE, _inputLayoutCache);
-	_mainCameraRenderer = std::make_unique<PassRenderer>(Engine::Get()->renderTarget(), RenderMode::Normal, _inputLayoutCache);
+	_lightGrid = std::make_shared<LightGrid>();
+	_mainCameraRenderer = std::make_unique<PassRenderer>(Engine::Get()->renderTarget(), _lightGrid, RenderMode::Normal, _inputLayoutCache);
 	_mainCameraRenderer->clearColor(true);
 	_mainCameraRenderer->clearDepth(false);
-	_depthPrePassRenderer = std::make_unique<PassRenderer>(Engine::Get()->renderTarget(), RenderMode::DepthOnly, _inputLayoutCache);
+	_depthPrePassRenderer = std::make_unique<PassRenderer>(Engine::Get()->renderTarget(), nullptr, RenderMode::DepthOnly, _inputLayoutCache);
 	_depthPrePassRenderer->clearColor(false);
 	_depthPrePassRenderer->clearDepth(true);
 }
@@ -55,12 +57,22 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 		}
 	}
 
+	// Light grid setup
+	auto windowSize = camera->cameraViewSize();
+	_lightGrid->update(windowSize.x, windowSize.y);
+
+	auto lights = scene->visibleLights(camera);
+	_lightGrid->appendLights(lights, camera);
+	auto projectors = scene->visibleProjectors(camera);
+	_lightGrid->appendProjectors(projectors, camera);
+
 	// TODO: better concurrency for frustum culling
 	for (auto &shadowCaster : _shadowCasters) {
 		scene->visibleObjects(shadowCaster);
 	}
 
-	_shadowMap->setupRenderPasses(_shadowCasters);
+	_lightGrid->upload();
+	//_lightGrid->bindBuffers();
 
 	{
 		Concurrency::diagnostic::span s1(markers_render, _T("Multiple thread rendering"));
@@ -69,6 +81,7 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 
 		tbb::task_group renderTaskGroup; // concurrently execute render passes
 
+		_shadowMap->setupRenderPasses(_shadowCasters);
 		// Shadow map passes
 		auto renderPasses = _shadowMap->renderPasses();
 		for (int i = 0; i < _shadowMap->renderPassCount(); i++) {

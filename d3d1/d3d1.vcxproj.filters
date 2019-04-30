@@ -294,6 +294,12 @@
     <ClInclude Include="engine\render\shading\ShadowMap.h">
       <Filter>engine\render\shading</Filter>
     </ClInclude>
+    <ClInclude Include="engine\render\buffer\D3DStructuredBuffer.h">
+      <Filter>engine\render\buffer</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\render\shading\LightGrid.h">
+      <Filter>engine\render\shading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -462,6 +468,12 @@
       <Filter>engine\render\texture</Filter>
     </ClCompile>
     <ClCompile Include="engine\render\shading\ShadowMap.cpp">
+      <Filter>engine\render\shading</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\buffer\D3DStructuredBuffer.cpp">
+      <Filter>engine\render\buffer</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\shading\LightGrid.cpp">
       <Filter>engine\render\shading</Filter>
     </ClCompile>
   </ItemGroup>

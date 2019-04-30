@@ -14,11 +14,12 @@
 #include "objects/Projector.h"
 #include "tbb/tbb.h"
 #include "RenderState.h"
+#include "render/shading/LightGrid.h"
 
 tbb::spin_mutex MaterialMutex;
 
-PassRenderer::PassRenderer(RenderTargetPtr renderTarget, RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache) :
-						   _renderTarget(renderTarget), _inputLayoutCache(inputLayoutCache), _mode(mode) {
+PassRenderer::PassRenderer(RenderTargetPtr renderTarget, std::shared_ptr<LightGrid> lightGrid, RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache) :
+		_renderTarget(renderTarget), _lightGrid(lightGrid), _inputLayoutCache(inputLayoutCache), _mode(mode) {
 
 	auto device = Engine::Get()->getD3DDevice();
 	device->CreateDeferredContext1(0, &_deferredContext);
@@ -100,6 +101,10 @@ void PassRenderer::render(ScenePtr scene, ICameraParamsProviderPtr camera) {
 }
 
 void PassRenderer::_renderQueues(RenderMode mode) {
+	if (_lightGrid && mode == RenderMode::Normal) {
+		_lightGrid->bindBuffers(_deferredContext);
+	}
+
 	for (auto &rop : _queues[(int)RenderQueue::Opaque]) {
 		_renderRop(rop, mode);
 	}

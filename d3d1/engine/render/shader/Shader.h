@@ -30,7 +30,7 @@ public:
 
 private:
 	void _initCaps(const ShaderCapsSet caps);
-	std::vector<D3D_SHADER_MACRO> _getDefinesForCaps(const ShaderCapsSet &caps);
+	std::vector<D3D_SHADER_MACRO> _getDefinesForCaps(const ShaderCapsSet &caps, const std::vector<const char *> additionalDefines);
 
 private:
 	VertexAttribSet _attribSet;

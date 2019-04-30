@@ -21,7 +21,7 @@ public:
   void align(unsigned int bytes);
   void erase();
   void setDirty() { _dirty = true; };
-  char *bufferPointer() { return &_data[0]; };
+  char *bufferPointer() { return const_cast<char *>(_data.data()); };
 
 protected:
   uint32_t _size = 0;
