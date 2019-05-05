@@ -35,6 +35,8 @@ const std::string ARCHITECTURE_FILE = "resources/level/architecture.mdl";
 const std::string PROPS_FILE = "resources/level/props.mdl";
 const std::string NO_SHADOW = "no_shadow";
 
+int lightIndex = 0;
+
 Level::Level(ScenePtr &scene, SpriteSheetPtr &decalsSpritesheet, TexturePtr &decalsTexture)
     : _scene(scene), _decalsSpritesheet(decalsSpritesheet), _decalsTexture(decalsTexture) {
   _levelRoot = CreateGameObject<GameObject>();
@@ -59,6 +61,7 @@ std::string Level::_getDecalName(const std::string &objectName) {
 
 GameObjectPtr Level::_createLight(HierarchyDataPtr &child) {
   auto lightData = _level->getLight(child->light);
+
   auto light = CreateGameObject<LightObject>();
   light->type(lightData->type == "spot" ? LightObjectType::Spot : LightObjectType::Point);
 
@@ -185,7 +188,6 @@ void Level::_setSphereBounds(GameObjectPtr &object) {
 GameObjectPtr Level::_loadHierarchy(HierarchyDataPtr hierarchy, const GameObjectPtr parentObj) {
 
   auto parent = parentObj ? parentObj : _levelRoot;
-
   for (auto &child : hierarchy->children) {
     GameObjectPtr object;
     HierarchyDataPtr arch = _architecture->getHierarchyByName(child->originalNodeID);

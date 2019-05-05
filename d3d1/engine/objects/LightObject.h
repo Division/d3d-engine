@@ -7,7 +7,7 @@
 
 #include "scene/GameObject.h"
 #include <memory>
-//#include "render/shader/UniformBufferStruct.h"
+#include "render/shader/ConstantBufferStruct.h"
 #include "utils/MeshGeneration.h"
 //#include "render/material/MaterialTypes.h"
 #include "EngineTypes.h"
@@ -48,12 +48,13 @@ public:
   void castShadows(bool value) { _castShadows = value; }
   void cameraVisibilityMask(unsigned int mask) { _visibilityMask = mask; };
 
-  unsigned int index() const { return _index; }
+  uint32_t index() const { return _index; }
+  void index(uint32_t index) { _index = index; }
 
   void enableDebug();
   //bool debugEnabled() { return _debugMesh && _debugMaterial; }
 
-  //UBOStruct::Light getLightStruct() const;
+  ConstantBufferStruct::Light getLightStruct() const;
 
   void render(IRenderer &renderer) override;
   void postUpdate() override;
@@ -76,13 +77,13 @@ public:
 
 private:
   // ICameraParamsProvider
-  unsigned int _visibilityMask = ~0u; // all visible by default
+  uint32_t _visibilityMask = ~0u; // all visible by default
 
   // Common light properties
   float _radius = 13;
   vec3 _color = vec3(1, 1, 1);
   float _attenuation = 2;
-  unsigned int _index; // index in scene array
+  uint32_t _index;
 
   // Spotlight properties
   float _coneAngle = 30;

@@ -36,7 +36,7 @@ void Texture::initTexture2D(int32_t width, int32_t height, int32_t channels, boo
 	this->initTexture2D(width, height, format, data, mipmaps);
 }
 
-void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *data, bool mipmaps, UINT bindFlags) {
+void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *data, bool mipmaps, UINT bindFlags, DXGI_FORMAT shaderResourceFormat) {
 	_release();
 
 	// Texture
@@ -51,9 +51,14 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 	textureDesc.Height = height;
 	textureDesc.Format = format;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
-	//textureDesc.MipLevels = mipmaps ? 0 : 1;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = mipmaps ? 0 : 1;
+	//textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
+
+	if (mipmaps) {
+		bindFlags |= D3D11_BIND_RENDER_TARGET;
+		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	}
 
 	// Don't use multi-sampling.
 	textureDesc.SampleDesc.Count = 1;
@@ -64,16 +69,24 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 	ThrowIfFailed(
 		Engine::Get()->getD3DDevice()->CreateTexture2D(
 			&textureDesc,
-			data ? &textureSubresourceData : nullptr,
+			nullptr,//data ? &textureSubresourceData : nullptr,
 			&_texture
 		)
 	);
 
+	if (data) {
+		Engine::Get()->getD3DContext()->UpdateSubresource(_texture, 0, NULL, data, textureSubresourceData.SysMemPitch, textureDesc.Height * textureSubresourceData.SysMemPitch);
+	}
+
+	if (shaderResourceFormat == DXGI_FORMAT_UNKNOWN) {
+		shaderResourceFormat = textureDesc.Format;
+	}
+
 	D3D11_SHADER_RESOURCE_VIEW_DESC textureViewDesc;
 	ZeroMemory(&textureViewDesc, sizeof(textureViewDesc));
-	textureViewDesc.Format = textureDesc.Format;
+	textureViewDesc.Format = shaderResourceFormat;
 	textureViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	textureViewDesc.Texture2D.MipLevels = textureDesc.MipLevels;
+	textureViewDesc.Texture2D.MipLevels = mipmaps ? -1 : 1;
 	textureViewDesc.Texture2D.MostDetailedMip = 0;
 
 	// Sampler
@@ -113,6 +126,10 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 				&_textureView
 			)
 		);
+
+		if (mipmaps) {
+			Engine::Get()->getD3DContext()->GenerateMips(_textureView);
+		}
 	}
 
 	ENGLog("TEXTURE 2D LOADED, %ix%i", width, height);

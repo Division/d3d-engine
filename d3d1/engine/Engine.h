@@ -39,7 +39,8 @@ public:
 	RenderTargetPtr renderTarget() const { return _renderTarget; }
 	ID3D11RenderTargetView *renderTargetView() const;
 	ID3D11DepthStencilView *depthStencilView() const;
-
+	void projectorTexture(TexturePtr texture);
+	TexturePtr projectorTexture() const;
 
 //	ID3D11RenderTargetView *renderTargetView() const { return backbuffer; };
 //	ID3D11DepthStencilView *depthStencilView() const { return depthStencil; };

@@ -23,7 +23,9 @@ public:
 
 	std::shared_ptr<ICameraParamsProvider> camera() const { return _camera; }
 	void camera(std::shared_ptr<ICameraParamsProvider> value) { _camera = value; }
-	
+	void setProjectorTexture(TexturePtr texture);
+	void setShadowmapTexture(TexturePtr texture);
+
 	void clearColor(bool value) { _clearColor = value; }
 	bool clearColor() const { return _clearColor; }
 	void clearDepth(bool value) { _clearDepth = value; }
@@ -54,6 +56,9 @@ private:
 	std::shared_ptr<LightGrid> _lightGrid;
 	std::unique_ptr<PassConstantBufferManager> _constantBufferManager;
 	std::unique_ptr<RenderState> _renderState;
+	uint32_t _texture0Index;;
+	uint32_t _projectorTextureIndex;
+	uint32_t _shadowmapTextureIndex;
 	RenderTargetPtr _renderTarget;
 	std::shared_ptr<InputLayoutCache> _inputLayoutCache;
 	ID3D11DeviceContext1 *_deferredContext;

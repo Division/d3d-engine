@@ -10,6 +10,8 @@
 #include "render/texture/RenderTarget.h"
 #include "render/renderer/InputLayoutCache.h"
 #include "tbb/tbb.h"
+#include <d3d11_1.h>
+#include "render/texture/Texture.h"
 
 const unsigned int CELL_COUNT = 4;
 const auto MAX_MAPS = CELL_COUNT * CELL_COUNT;
@@ -17,7 +19,10 @@ const auto MAX_MAPS = CELL_COUNT * CELL_COUNT;
 ShadowMap::ShadowMap(unsigned int resolutionX, unsigned int resolutionY, std::shared_ptr<InputLayoutCache> inputLayoutCache) {
   _resolution = uvec2(resolutionX, resolutionY);
   _inputLayoutCache = inputLayoutCache;
-  _depthAtlas = std::make_shared<RenderTarget>(resolutionX, resolutionY, false, true);
+  _depthAtlas = std::make_shared<RenderTarget>(
+	  resolutionX, resolutionY, 
+	  (int)RenderTarget::Mode::Depth | (int)RenderTarget::Mode::DepthBindShaderResource
+  );
 
   float emptySpacing = (float)((CELL_COUNT - 1u) * _pixelSpacing);
   _cellPixelSize = glm::floor(vec2(resolutionX - emptySpacing, resolutionY - emptySpacing) / (float)CELL_COUNT);
@@ -93,7 +98,6 @@ Rect ShadowMap::getCellRect(unsigned int index) {
   return Rect(origin.x, origin.y, _cellSize.x, _cellSize.y);
 }
 
-
-TexturePtr ShadowMap::depthAtlas() {
+TexturePtr ShadowMap::depthAtlas() const {
   return _depthAtlas->depthTexture();
 }

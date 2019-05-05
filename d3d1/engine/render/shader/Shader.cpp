@@ -105,8 +105,8 @@ void Shader::loadFromString(const char *shaderSource, size_t length, const std::
 
 	auto definesVertex = _getDefinesForCaps(caps, { SHADER_IS_VERTEX.c_str() });
 	auto definesPixel = _getDefinesForCaps(caps, { SHADER_IS_PIXEL.c_str() });
-	auto result1 = D3DCompile(shaderSource, length, NULL, &definesVertex[0], NULL, "VShader", "vs_5_0", 0, 0, &_vsBlob, &errors1);
-	auto result2 = D3DCompile(shaderSource, length, NULL, &definesPixel[0], NULL, "PShader", "ps_5_0", 0, 0, &_psBlob, &errors2);
+	auto result1 = D3DCompile(shaderSource, length, NULL, &definesVertex[0], NULL, "VShader", "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &_vsBlob, &errors1);
+	auto result2 = D3DCompile(shaderSource, length, NULL, &definesPixel[0], NULL, "PShader", "ps_5_0", D3DCOMPILE_DEBUG	| D3DCOMPILE_SKIP_OPTIMIZATION, 0, &_psBlob, &errors2);
 
 	_error = false;
 	if (FAILED(result1)) {
@@ -146,7 +146,7 @@ void Shader::loadFromString(const char *shaderSource, size_t length, const std::
 	}
 }
 
-void Shader::bind(ID3D11DeviceContext1 *context)
+void Shader::bind(ID3D11DeviceContext1 *context, bool enablePixel)
 {
 	if (!_ready) {
 		return;
@@ -158,7 +158,7 @@ void Shader::bind(ID3D11DeviceContext1 *context)
 	
 	// set the shader objects
 	context->VSSetShader(_vs, 0, 0);
-	context->PSSetShader(_ps, 0, 0);
+	context->PSSetShader(enablePixel ? _ps : nullptr, 0, 0);
 }
 
 

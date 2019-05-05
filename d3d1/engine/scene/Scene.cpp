@@ -194,7 +194,7 @@ Scene::Visibility &Scene::_getVisibilityForCamera(const std::shared_ptr<ICameraP
   for (auto &object : _projectors) {
     auto layerVisible = (bool)(object->layer() & camera->cameraVisibilityMask());
     if (!layerVisible || !_objectIsVisible(object, frustum)) { continue; }
-    object->_index = counter++;
+    //object->_index = counter++;
     visibility.projectors.push_back(object);
   }
 
@@ -202,7 +202,7 @@ Scene::Visibility &Scene::_getVisibilityForCamera(const std::shared_ptr<ICameraP
   for (auto &object : _lights) {
     auto layerVisible = (bool)(object->layer() & camera->cameraVisibilityMask());
     if (!layerVisible || !_objectIsVisible(object, frustum)) { continue; }
-    object->_index = counter++;
+    //object->_index = counter++;
     visibility.lights.push_back(object);
   }
 

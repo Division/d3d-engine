@@ -22,16 +22,16 @@ void Game::init() {
 
 	tbb::task_group loadingGroup;
 
-	loadingGroup.run([&] {
+	//loadingGroup.run([&] {
 		_spritesheet = loader::loadSpritesheet("resources/common/decals.json");
 		auto decals = loader::loadTexture("resources/common/" + _spritesheet->spritesheetName());
-		//engine->projectorTexture(decals);
+		Engine::Get()->projectorTexture(decals);
 
 		_level = std::make_shared<Level>(_scene, _spritesheet, decals);
 		_level->load("resources/level/level1.mdl");
-	});
+	//});
 
-	loadingGroup.run([&] {
+	//loadingGroup.run([&] {
 		_playerModel = loader::loadModel("resources/models/dwarf/dwarf.mdl");
 		auto characterIdle = loader::loadModel("resources/models/dwarf/dwarf_idle.mdl");
 		auto characterRun = loader::loadModel("resources/models/dwarf/dwarf_run.mdl");
@@ -39,9 +39,9 @@ void Game::init() {
 		_playerModel->appendAnimationBundle(characterRun, "run");
 		_playerModel->appendAnimationBundle(characterIdle, "idle");
 		_playerModel->appendAnimationBundle(characterAttackLeg, "attack_leg");
-	});
+	//});
 
-	loadingGroup.wait();
+	//loadingGroup.wait();
 
 	_player = loader::loadSkinnedMesh<PlayerController>(_playerModel);
 	_player->transform()->scale(vec3(0.014, 0.014, 0.014));

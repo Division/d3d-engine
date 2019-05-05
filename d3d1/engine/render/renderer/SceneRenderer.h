@@ -19,7 +19,11 @@ public:
 
 	void renderScene(ScenePtr scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D = nullptr);
 
+	void projectorTexture(TexturePtr texture);
+	TexturePtr projectorTexture() const;
 	const InputLayoutCache *inputLayoutCache() const { return _inputLayoutCache.get(); }
+	
+	static const uint32_t shadowAtlasSize();
 
 private:
 	void _clearQueues();
@@ -36,6 +40,7 @@ private:
 	std::vector<RenderOperation> _queues[(int)RenderQueue::Count];
 	std::vector<RenderOperation *>_skinningRops;
 
+	TexturePtr _projectorTexture;
 	mutable std::vector<std::shared_ptr<IShadowCaster>> _shadowCasters;
 };
 

@@ -15,16 +15,35 @@
 #include "tbb/tbb.h"
 #include "RenderState.h"
 #include "render/shading/LightGrid.h"
+#include "render/shader/ShaderResource.h"
 
 tbb::spin_mutex MaterialMutex;
 
 PassRenderer::PassRenderer(RenderTargetPtr renderTarget, std::shared_ptr<LightGrid> lightGrid, RenderMode mode, std::shared_ptr<InputLayoutCache> inputLayoutCache) :
 		_renderTarget(renderTarget), _lightGrid(lightGrid), _inputLayoutCache(inputLayoutCache), _mode(mode) {
 
+	_texture0Index = SHADER_SAMPLER_REGISTERS.at(ShaderResourceName::Texture0);
+	_projectorTextureIndex = SHADER_SAMPLER_REGISTERS.at(ShaderResourceName::ProjectorTexture);
+	_shadowmapTextureIndex = SHADER_SAMPLER_REGISTERS.at(ShaderResourceName::ShadowMap);
+
 	auto device = Engine::Get()->getD3DDevice();
 	device->CreateDeferredContext1(0, &_deferredContext);
 	_constantBufferManager = std::make_unique<PassConstantBufferManager>(_deferredContext);
 	_renderState = std::make_unique<RenderState>(_deferredContext, renderTarget);
+}
+
+void PassRenderer::setProjectorTexture(TexturePtr texture) {
+	if (texture) {
+		_deferredContext->PSSetShaderResources(_projectorTextureIndex, 1, texture->resourcePointer());
+		_deferredContext->PSSetSamplers(_projectorTextureIndex, 1, texture->samplerStatePointer());
+	}
+}
+
+void PassRenderer::setShadowmapTexture(TexturePtr texture) {
+	if (texture) {
+		_deferredContext->PSSetShaderResources(_shadowmapTextureIndex, 1, texture->resourcePointer());
+		_deferredContext->PSSetSamplers(_shadowmapTextureIndex, 1, texture->samplerStatePointer());
+	}
 }
 
 void PassRenderer::_clearQueues() {
@@ -114,6 +133,7 @@ void PassRenderer::_renderQueues(RenderMode mode) {
 }
 
 void PassRenderer::_renderRop(RenderOperation &rop, RenderMode mode) {
+	bool isDepthOnly = mode == RenderMode::DepthOnly;
 	auto context = this->_deferredContext;
 	UINT stride = rop.mesh->strideBytes();
 	UINT offset = 0;
@@ -132,8 +152,8 @@ void PassRenderer::_renderRop(RenderOperation &rop, RenderMode mode) {
 
 	auto texture0 = material->texture0();
 	if (texture0) {
-		context->PSSetShaderResources(0, 1, texture0->resourcePointer());
-		context->PSSetSamplers(0, 1, texture0->samplerStatePointer());
+		context->PSSetShaderResources(_texture0Index, 1, texture0->resourcePointer());
+		context->PSSetSamplers(_texture0Index, 1, texture0->samplerStatePointer());
 	}
 
 	auto &caps = rop.skinningMatrices ? material->shaderCapsSkinning() : material->shaderCaps();
@@ -141,7 +161,7 @@ void PassRenderer::_renderRop(RenderOperation &rop, RenderMode mode) {
 	auto layout = _inputLayoutCache->getLayout(rop.mesh, shader); // TODO: concurrency
 	context->IASetInputLayout(layout);
 
-	shader->bind(context);
+	shader->bind(context, !isDepthOnly);
 
 	if (rop.mesh->hasVertices()) {
 		auto vertexBuffer = rop.mesh->vertexBuffer()->buffer();

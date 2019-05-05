@@ -57,17 +57,17 @@ private:
 		}
 		if (vertexAttribSet.hasCap(VertexAttrib::Normal)) {
 			layout.push_back(
-				{ "NORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->normalOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->normalOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);
 		}
 		if (vertexAttribSet.hasCap(VertexAttrib::Bitangent)) {
 			layout.push_back(
-				{ "BINORMAL", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->bitangentOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				{ "BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->bitangentOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);
 		}
 		if (vertexAttribSet.hasCap(VertexAttrib::Tangent)) {
 			layout.push_back(
-				{ "TANGENT", 0, DXGI_FORMAT_R32G32_FLOAT, 0, (UINT)mesh->tangentOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+				{ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->tangentOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);
 		}
 		if (vertexAttribSet.hasCap(VertexAttrib::TexCoord0)) {

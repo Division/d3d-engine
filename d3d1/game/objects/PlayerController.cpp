@@ -47,7 +47,7 @@ void PlayerController::start() {
   _topLight = CreateGameObject<LightObject>();
   _topLight->transform()->parent(transform());
   _topLight->transform()->position(vec3(0, 10 / transform()->scale().x, 0));
-  _topLight->transform()->rotate(vec3(1, 0, 0), RAD(-90));
+  _topLight->transform()->rotate(vec3(1, 0, 0), RAD(90));
   _topLight->transform()->scale(vec3(1) / transform()->scale()); // light scale has to be uniform
   _topLight->type(LightObjectType::Point);
   _topLight->coneAngle(110);

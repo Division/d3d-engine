@@ -23,11 +23,19 @@ Concurrency::diagnostic::marker_series markers_render(_T("render"));
 
 const unsigned int SHADOW_ATLAS_SIZE = 4096;
 
+void SceneRenderer::projectorTexture(TexturePtr texture) {
+	_projectorTexture = texture;
+}
+
+TexturePtr SceneRenderer::projectorTexture() const {
+	return _projectorTexture;
+}
+
 SceneRenderer::SceneRenderer() {
 	_constantBufferManager = std::make_shared<ConstantBufferManager>();
 	_inputLayoutCache = std::make_shared<InputLayoutCache>();
 	_shadowMap = std::make_unique<ShadowMap>(SHADOW_ATLAS_SIZE, SHADOW_ATLAS_SIZE, _inputLayoutCache);
-	_lightGrid = std::make_shared<LightGrid>();
+	_lightGrid = std::make_shared<LightGrid>(32);
 	_mainCameraRenderer = std::make_unique<PassRenderer>(Engine::Get()->renderTarget(), _lightGrid, RenderMode::Normal, _inputLayoutCache);
 	_mainCameraRenderer->clearColor(true);
 	_mainCameraRenderer->clearDepth(false);
@@ -39,7 +47,6 @@ SceneRenderer::SceneRenderer() {
 void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D) {
 	if (!camera) { return; }
 	auto context = Engine::Get()->getD3DContext();
-
 
 	// Shadow casters
 	auto &visibleLights = scene->visibleLights(camera);
@@ -61,6 +68,8 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 	auto windowSize = camera->cameraViewSize();
 	_lightGrid->update(windowSize.x, windowSize.y);
 
+	_shadowMap->setupRenderPasses(_shadowCasters); // Should go BEFORE lightgrid setup
+
 	auto lights = scene->visibleLights(camera);
 	_lightGrid->appendLights(lights, camera);
 	auto projectors = scene->visibleProjectors(camera);
@@ -81,7 +90,7 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 
 		tbb::task_group renderTaskGroup; // concurrently execute render passes
 
-		_shadowMap->setupRenderPasses(_shadowCasters);
+		auto projectorTexture = _projectorTexture;
 		// Shadow map passes
 		auto renderPasses = _shadowMap->renderPasses();
 		for (int i = 0; i < _shadowMap->renderPassCount(); i++) {
@@ -99,6 +108,8 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 
 		// Main camera
 		renderTaskGroup.run([&] {
+			_mainCameraRenderer->setProjectorTexture(projectorTexture);
+			_mainCameraRenderer->setShadowmapTexture(_shadowMap->depthAtlas());
 			_mainCameraRenderer->render(scene, camera);
 		});
 
@@ -123,6 +134,10 @@ void SceneRenderer::renderScene(ScenePtr scene, ICameraParamsProviderPtr camera,
 	if (commandList) {
 		context->ExecuteCommandList(commandList, false);
 	}
+}
+
+const uint32_t SceneRenderer::shadowAtlasSize() {
+	return SHADOW_ATLAS_SIZE;
 }
 
 void SceneRenderer::_clearQueues() {

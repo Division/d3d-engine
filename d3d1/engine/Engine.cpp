@@ -96,7 +96,10 @@ void Engine::_initDirectX()
 	swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 	TexturePtr backBufferTexture = std::make_shared<Texture>(pBackBuffer);
 	// use the back buffer address to create the render target
-	_renderTarget = std::make_shared<RenderTarget>(_window->width(), _window->height(), backBufferTexture, nullptr, true, true);
+	_renderTarget = std::make_shared<RenderTarget>(
+		_window->width(), _window->height(), backBufferTexture, nullptr,
+		(int)RenderTarget::Mode::Color | (int)RenderTarget::Mode::ColorBindShaderResource | (int)RenderTarget::Mode::Depth
+	);
 	pBackBuffer->Release();
 
 	_initPipeline();
@@ -108,7 +111,14 @@ ID3D11RenderTargetView *Engine::renderTargetView() const {
 
 ID3D11DepthStencilView *Engine::depthStencilView() const { 
 	return _renderTarget->depthStencilView(); 
-};
+}
+void Engine::projectorTexture(TexturePtr texture) {
+	_sceneRenderer->projectorTexture(texture);
+}
+
+TexturePtr Engine::projectorTexture() const {
+	return _sceneRenderer->projectorTexture();
+}
 
 void Engine::startLoop() {
 	while (!_window->quitTriggered()) {

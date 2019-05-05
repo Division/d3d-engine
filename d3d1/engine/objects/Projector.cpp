@@ -6,7 +6,7 @@
 #include "Projector.h"
 #include "render/shader/ConstantBufferStruct.h"
 #include "EngineMath.h"
-//#include "render/renderer/SceneRenderer.h"
+#include "render/renderer/SceneRenderer.h"
 
 void Projector::postUpdate() {
   _viewMatrix = glm::inverse(transform()->worldMatrix());
@@ -44,7 +44,7 @@ mat4 Projector::_getProjection() const {
 }
 
 ConstantBufferStruct::Projector Projector::getProjectorStruct() const {
-	ConstantBufferStruct::Projector result;
+  ConstantBufferStruct::Projector result;
 
   result.position = transform()->worldPosition();
   result.attenuation = _squareAttenuation;
@@ -55,8 +55,8 @@ ConstantBufferStruct::Projector Projector::getProjectorStruct() const {
   result.mask = cameraVisibilityMask();
 
   if (castShadows()) {
-    //result.shadowmapScale = vec2(_viewport.z, _viewport.w) / SceneRenderer::shadowAtlasSize();
-    //result.shadowmapOffset = vec2(_viewport.x, _viewport.y) / SceneRenderer::shadowAtlasSize();
+	  result.shadowmapScale = vec2(_viewport.z, _viewport.w) / (float)SceneRenderer::shadowAtlasSize();
+	  result.shadowmapOffset = vec2(_viewport.x, _viewport.y) / (float)SceneRenderer::shadowAtlasSize();
   } else {
     result.shadowmapScale = vec2(0, 0);
   }

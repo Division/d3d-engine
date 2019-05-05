@@ -17,8 +17,8 @@
 #include "DXCaps.h"
 
 const uint32_t MAX_LIGHTS = 100;
-const uint32_t LIGHTS_SIZE = ((uint32_t)ceilf(MAX_LIGHTS * sizeof(ConstantBufferName::Light) / 256.0f)) * 256;
-const uint32_t PROJECTORS_SIZE = ((uint32_t)ceilf(MAX_LIGHTS * sizeof(ConstantBufferName::Light) / 256.0f)) * 256;
+const uint32_t LIGHTS_SIZE = ((uint32_t)ceilf(MAX_LIGHTS * sizeof(ConstantBufferStruct::Light) / 256.0f)) * 256;
+const uint32_t PROJECTORS_SIZE = ((uint32_t)ceilf(MAX_LIGHTS * sizeof(ConstantBufferStruct::Light) / 256.0f)) * 256;
 
 struct LightGridStruct {
 	uint32_t offset;
@@ -114,7 +114,14 @@ void LightGrid::_appendItem(const std::shared_ptr<ICameraParamsProvider> camera,
 
 void LightGrid::appendLights(const std::vector<LightObjectPtr> &lights,
                              const std::shared_ptr<ICameraParamsProvider> camera) {
-	_lightCount = lights.size();
+  _lightCount = lights.size();
+
+  for (int i = 0; i < lights.size(); i++) {
+	  auto &light = lights[i];
+	  auto lightData = light->getLightStruct();
+	  _lights->appendData(&lightData, sizeof(lightData));
+	  light->index(i);
+  }
 
   _lightEdges.resize(4);
 
@@ -143,7 +150,14 @@ void LightGrid::appendLights(const std::vector<LightObjectPtr> &lights,
 void LightGrid::appendProjectors(const std::vector<ProjectorPtr> &projectors,
                                  std::shared_ptr<ICameraParamsProvider> camera) {
 
-	_projectorCount = projectors.size();
+  _projectorCount = projectors.size();
+
+  for (int i = 0; i < projectors.size(); i++) {
+	  auto &projector = projectors[i];
+	  auto projectorData = projector->getProjectorStruct();
+	  _projectors->appendData(&projectorData, sizeof(projectorData));
+	  projector->index(i);
+  }
 
   for (auto &projector : projectors) {
     projector->getEdgePoints(_lightEdges);
@@ -169,7 +183,7 @@ void LightGrid::upload() {
   // Little bit unsafe but convenient way to directly modify data within the memory
   auto gridBufferPointer = (LightGridStruct *)_lightGrid->bufferPointer();
 
-  unsigned int currentOffset = 0;
+  uint32_t currentOffset = 0;
   for (int i = 0; i < _cells.size(); i++) {
     auto &cell = _cells[i];
 
@@ -236,6 +250,13 @@ void LightGrid::bindBuffers(ID3D11DeviceContext1 *context) {
 
 	context->VSSetConstantBuffers1((UINT)ConstantBufferName::Light, 1, &constantBuffer, &firstConstant, &constantCount);
 	context->PSSetConstantBuffers1((UINT)ConstantBufferName::Light, 1, &constantBuffer, &firstConstant, &constantCount);
+
+	// Projectors
+	constantBuffer = _projectors->buffer();
+	constantCount = PROJECTORS_SIZE / DXCaps::CONSTANT_BUFFER_CONSTANT_SIZE;
+
+	context->VSSetConstantBuffers1((UINT)ConstantBufferName::Projector, 1, &constantBuffer, &firstConstant, &constantCount);
+	context->PSSetConstantBuffers1((UINT)ConstantBufferName::Projector, 1, &constantBuffer, &firstConstant, &constantCount);
 }
 
 /*

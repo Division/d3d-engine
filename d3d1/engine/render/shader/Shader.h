@@ -18,7 +18,7 @@ public:
 
 	void loadFromFile(const std::string &filename, ShaderCapsSet caps = ShaderCapsSet());
 	void loadFromString(const char *shaderSource, size_t length, const std::string &filename, ShaderCapsSet caps);
-	void bind(ID3D11DeviceContext1 * context = nullptr);
+	void bind(ID3D11DeviceContext1 *context = nullptr, bool enablePixel = true);
 	ID3D11InputLayout *createInputLayout(D3D11_INPUT_ELEMENT_DESC *inputDescription, int32_t count);
 
 	const ShaderCapsSet &capsSet() const { return _caps; }

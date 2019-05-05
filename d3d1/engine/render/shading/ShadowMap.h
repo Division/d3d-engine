@@ -23,8 +23,8 @@ public:
 	PassRendererPtr *renderPasses() const { return const_cast<PassRendererPtr *>(_renderers.data()); }
 	int32_t renderPassCount() const { return _shadowCasterCount; }
 	void execute(ID3D11DeviceContext *immediateContext) const;
-
-  TexturePtr depthAtlas();
+	
+  TexturePtr depthAtlas() const;
 private:
   uvec2 _resolution;
   uvec2 _cellPixelSize;

@@ -67,6 +67,7 @@ public:
   void type(ProjectorType value) { _type = value; }
 
   unsigned int index() const { return _index; }
+  void index(unsigned int index) { _index = index; }
   void cameraVisibilityMask(unsigned int mask) { _visibilityMask = mask; };
 
   void setDebugEnabled(bool enabled) { _debugEnabled = enabled; }
