@@ -4,6 +4,7 @@
 #include <dbghelp.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include "BuildConfig.h"
 
 LPTOP_LEVEL_EXCEPTION_FILTER oldFilter;
 
@@ -13,7 +14,7 @@ LONG WINAPI UnhandledExceptionHandler(PEXCEPTION_POINTERS exceptionPointers)
 	WCHAR szPath[1024];
 	WCHAR szFileName[1024];
 	const WCHAR* szAppName = L"AppName";
-	const WCHAR* szVersion = L"v1.0";
+	const WCHAR* szVersion = BUILD_COMMIT_HASH;
 	DWORD dwBufferSize = 1024;
 	HANDLE hDumpFile;
 	SYSTEMTIME stLocalTime;
@@ -24,7 +25,7 @@ LONG WINAPI UnhandledExceptionHandler(PEXCEPTION_POINTERS exceptionPointers)
 	
 	wsprintf(szFileName, L"%s%s", szPath, szAppName);
 	CreateDirectory(szFileName, NULL);
-	wsprintf(szFileName, L"%s\\crash-dump-%s-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp",
+	wsprintf(szFileName, L"%s\\crash-dump-hash[%s]-%04d%02d%02d-%02d%02d%02d-%ld-%ld.dmp",
 		szPath, szVersion,
 		stLocalTime.wYear, stLocalTime.wMonth, stLocalTime.wDay,
 		stLocalTime.wHour, stLocalTime.wMinute, stLocalTime.wSecond,

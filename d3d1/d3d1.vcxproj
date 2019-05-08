@@ -152,6 +152,11 @@
       <PreventDllBinding>
       </PreventDllBinding>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -Command "(gc $(ProjectDir)\engine\BuildConfig.h) -replace '#define BUILD_COMMIT_HASH L\".*\"',('#define BUILD_COMMIT_HASH L\"{0}\"' -f (git rev-parse --short HEAD)) | Out-String | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
+powershell -Command "(gc -Raw $(ProjectDir)\engine\BuildConfig.h) -replace '(\r\n){3,}','$1' | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
+echo "Git commit updated"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -210,6 +215,11 @@
       <PreventDllBinding>
       </PreventDllBinding>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -Command "(gc $(ProjectDir)\engine\BuildConfig.h) -replace '#define BUILD_COMMIT_HASH L\".*\"',('#define BUILD_COMMIT_HASH L\"{0}\"' -f (git rev-parse --short HEAD)) | Out-String | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
+powershell -Command "(gc -Raw $(ProjectDir)\engine\BuildConfig.h) -replace '(\r\n){3,}','$1' | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
+echo "Git commit updated"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
     <ClCompile>
@@ -232,6 +242,11 @@
       <PreventDllBinding>
       </PreventDllBinding>
     </Link>
+    <PreBuildEvent>
+      <Command>powershell -Command "(gc $(ProjectDir)\engine\BuildConfig.h) -replace '#define BUILD_COMMIT_HASH L\".*\"',('#define BUILD_COMMIT_HASH L\"{0}\"' -f (git rev-parse --short HEAD)) | Out-String | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
+powershell -Command "(gc -Raw $(ProjectDir)\engine\BuildConfig.h) -replace '(\r\n){3,}','$1' | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
+echo "Git commit updated"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="d3d1.h" />
