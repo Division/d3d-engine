@@ -1,8 +1,10 @@
 ﻿#pragma once
 
-#define CRASHDUMP_ENABLED true
+#include "BuildConfig.h"
 
+#if CRASHDUMP_ENABLED
 #pragma comment (lib, "dbghelp.lib")
+#endif
 
 namespace ErrorDump {
 

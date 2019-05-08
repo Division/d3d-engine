@@ -8,6 +8,7 @@
 
 LPTOP_LEVEL_EXCEPTION_FILTER oldFilter;
 
+#if CRASHDUMP_ENABLED
 LONG WINAPI UnhandledExceptionHandler(PEXCEPTION_POINTERS exceptionPointers)
 {
 	BOOL bMiniDumpSuccessful;
@@ -42,6 +43,7 @@ LONG WINAPI UnhandledExceptionHandler(PEXCEPTION_POINTERS exceptionPointers)
 
 	return EXCEPTION_EXECUTE_HANDLER;
 }
+#endif
 
 void ErrorDump::setup() {
 	// To debug handler uncomment:
@@ -50,9 +52,13 @@ void ErrorDump::setup() {
 		*pBadPtr = 0;
 	} __except (UnhandledExceptionHandler(GetExceptionInformation())) {}*/
 
+#if CRASHDUMP_ENABLED
 	oldFilter = SetUnhandledExceptionFilter(UnhandledExceptionHandler);
+#endif
 }
 
 void ErrorDump::close() {
+#if CRASHDUMP_ENABLED
 	SetUnhandledExceptionFilter(oldFilter);
+#endif
 }
