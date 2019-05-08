@@ -57,7 +57,8 @@ private:
 	HWND hWnd;
 	IDXGISwapChain *swapchain;
 	ID3D11Device1 *dev;
-	ID3D11DeviceContext1 *context;         
+	ID3D11DeviceContext1 *context;     
+	ID3D11Debug *_dxDebug = nullptr;
 	//ID3D11RenderTargetView *backbuffer;
 	//ID3D11DepthStencilView *depthStencil;
 	ID3D11DepthStencilState *dsState;

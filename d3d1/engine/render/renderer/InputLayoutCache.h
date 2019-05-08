@@ -55,7 +55,7 @@ private:
 				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->vertexOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);
 		}
-		if (vertexAttribSet.hasCap(VertexAttrib::Normal)) {
+		if (vertexAttribSet.hasCap(VertexAttrib::Normal) || mesh->hasNormals()) {
 			layout.push_back(
 				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, (UINT)mesh->normalOffsetBytes(), D3D11_INPUT_PER_VERTEX_DATA, 0 }
 			);

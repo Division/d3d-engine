@@ -18,6 +18,7 @@
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
 #include "utils/Performance.h"
+#include "BuildConfig.h"
 
 Engine *Engine::_instance = nullptr;
 
@@ -53,6 +54,9 @@ Engine::~Engine()
 	dev->Release();
 	//backbuffer->Release();
 	context->Release();
+	if (_dxDebug) {
+		_dxDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	}
 }
 
 void Engine::_initDirectX()
@@ -78,10 +82,15 @@ void Engine::_initDirectX()
 	swapChainDesc.Windowed = TRUE;
 
 	// create a device, device context and swap chain using the information in the scd struct
+	UINT deviceFlags = 0;
+#if ENGINE_DIRECTX_DEBUG
+	deviceFlags = D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
 	D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		D3D11_CREATE_DEVICE_DEBUG,
+		deviceFlags,
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,
@@ -101,6 +110,10 @@ void Engine::_initDirectX()
 		(int)RenderTarget::Mode::Color | (int)RenderTarget::Mode::ColorBindShaderResource | (int)RenderTarget::Mode::Depth
 	);
 	pBackBuffer->Release();
+
+#if ENGINE_DIRECTX_DEBUG
+	ThrowIfFailed(dev->QueryInterface(IID_PPV_ARGS(&_dxDebug)));
+#endif
 
 	_initPipeline();
 }

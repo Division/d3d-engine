@@ -8,6 +8,7 @@
 #include "render/mesh/VertexAttrib.h"
 #include "loader/FileLoader.h"
 #include "ShaderDefines.h"
+#include "BuildConfig.h"
 
 Shader::Shader(ID3DContextProvider *provider) : _provider(provider) {}
 
@@ -105,8 +106,14 @@ void Shader::loadFromString(const char *shaderSource, size_t length, const std::
 
 	auto definesVertex = _getDefinesForCaps(caps, { SHADER_IS_VERTEX.c_str() });
 	auto definesPixel = _getDefinesForCaps(caps, { SHADER_IS_PIXEL.c_str() });
-	auto result1 = D3DCompile(shaderSource, length, NULL, &definesVertex[0], NULL, "VShader", "vs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &_vsBlob, &errors1);
-	auto result2 = D3DCompile(shaderSource, length, NULL, &definesPixel[0], NULL, "PShader", "ps_5_0", D3DCOMPILE_DEBUG	| D3DCOMPILE_SKIP_OPTIMIZATION, 0, &_psBlob, &errors2);
+
+	UINT flags = 0;
+#if ENGINE_DIRECTX_DEBUG
+	flags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+#endif
+
+	auto result1 = D3DCompile(shaderSource, length, NULL, &definesVertex[0], NULL, "VShader", "vs_5_0", flags, 0, &_vsBlob, &errors1);
+	auto result2 = D3DCompile(shaderSource, length, NULL, &definesPixel[0], NULL, "PShader", "ps_5_0", flags, 0, &_psBlob, &errors2);
 
 	_error = false;
 	if (FAILED(result1)) {

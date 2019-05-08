@@ -17,6 +17,7 @@ void StainGlass::start() {
   vec3 halfSize = size / 2.0f;
   _cullingData.sphere.radius = glm::length(halfSize);
   _cullingData.sphere.position = transform()->worldPosition() + halfSize + _mesh->aabb().min * scale;
+  _material->lightingEnabled(false);
 }
 
 void StainGlass::setup(SpriteSheetPtr &spritesheet, TexturePtr &decals, const std::string &spriteName) {

@@ -300,6 +300,12 @@
     <ClInclude Include="engine\render\shading\LightGrid.h">
       <Filter>engine\render\shading</Filter>
     </ClInclude>
+    <ClInclude Include="engine\system\ErrorDump.h">
+      <Filter>engine\system</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\BuildConfig.h">
+      <Filter>engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -475,6 +481,9 @@
     </ClCompile>
     <ClCompile Include="engine\render\shading\LightGrid.cpp">
       <Filter>engine\render\shading</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\system\ErrorDump.cpp">
+      <Filter>engine\system</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

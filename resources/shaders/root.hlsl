@@ -64,13 +64,13 @@ VOut VShader(VIn input) {
     output.position_worldspace = position_worldspace;
     output.normal_worldspace = normalize(mul(modelMatrix, float4(input.normal.xyz, 0)));
 #if defined(ATTRIB_TEXCOORD0)
-    output.texCoord0 = input.texCoord0;
+    output.texCoord0 = input.texCoord0 * uvScale + uvOffset;
 #endif
     
     return output;
 }
 
-#if defined (RESOURCE_LIGHT_GRID)
+#if defined (CAP_LIGHTING)
 
 Texture2D shadowMap : register(t7);
 SamplerState shadowMapSampler : register(s7);
@@ -177,14 +177,13 @@ float4 PShader(VOut input) : SV_TARGET
     float2 uvDDY = 0;
 #endif
 
-#if defined (RESOURCE_LIGHT_GRID)
+#if defined (CAP_LIGHTING)
     float TILE_SIZE = 32.0;
     float2 screenSize = float2(cameraScreenSize);
     int2 tilesCount = int2(ceil(screenSize / TILE_SIZE));
     float2 pixelCoord = float2(input.position.x, screenSize.y - input.position.y);
     int tileX = int(floor(pixelCoord.x / TILE_SIZE));
     int tileY = int(floor(pixelCoord.y / TILE_SIZE));
-
 
     int tileIndex = tileX + tilesCount.x * tileY;
     LightGrid gridItem = lightGridBuffer[tileIndex];
