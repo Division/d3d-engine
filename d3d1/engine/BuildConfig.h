@@ -6,6 +6,6 @@
 #define CRASHDUMP_ENABLED false
 #endif
 
-// It's being auto incremented by the pre build script
+// It's being auto updated by the pre-build script
 #define BUILD_COMMIT_HASH L"abdc6c1"
 
