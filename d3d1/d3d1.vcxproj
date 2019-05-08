@@ -153,9 +153,8 @@
       </PreventDllBinding>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -Command "(gc $(ProjectDir)\engine\BuildConfig.h) -replace '#define BUILD_COMMIT_HASH L\".*\"',('#define BUILD_COMMIT_HASH L\"{0}\"' -f (git rev-parse --short HEAD)) | Out-String | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
-powershell -Command "(gc -Raw $(ProjectDir)\engine\BuildConfig.h) -replace '(\r\n){3,}','$1' | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
-echo "Git commit updated"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -216,9 +215,8 @@ echo "Git commit updated"</Command>
       </PreventDllBinding>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -Command "(gc $(ProjectDir)\engine\BuildConfig.h) -replace '#define BUILD_COMMIT_HASH L\".*\"',('#define BUILD_COMMIT_HASH L\"{0}\"' -f (git rev-parse --short HEAD)) | Out-String | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
-powershell -Command "(gc -Raw $(ProjectDir)\engine\BuildConfig.h) -replace '(\r\n){3,}','$1' | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
-echo "Git commit updated"</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Production|x64'">
