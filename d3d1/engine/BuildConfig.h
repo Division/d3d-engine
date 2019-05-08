@@ -7,5 +7,5 @@
 #endif
 
 // It's being auto incremented by the pre build script
-#define BUILD_COMMIT_HASH L"1756c7d"
+#define BUILD_COMMIT_HASH L"abdc6c1"
 
