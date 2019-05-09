@@ -245,6 +245,15 @@
 powershell -Command "(gc -Raw $(ProjectDir)\engine\BuildConfig.h) -replace '(\r\n){3,}','$1' | Out-File -Encoding UTF8 $(ProjectDir)\engine\BuildConfig.h"
 echo "Git commit updated"</Command>
     </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>if exist $(SolutionDir)dist rmdir $(SolutionDir)dist /s /Q
+mkdir $(SolutionDir)dist
+mkdir $(SolutionDir)dist\build
+powershell -Command "robocopy $(SolutionDir)resources $(SolutionDir)dist\build\resources /e"
+cd $(SolutionDir) &amp;&amp; for %%f in (*.dll *.exe) do copy "%%f" $(SolutionDir)dist\build\
+powershell -Command "$hash = ' $(SolutionDir)dist\build-' + (git rev-parse --short HEAD) + '.zip'; &amp; { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('$(SolutionDir)dist\build\', $hash); }"
+copy $(SolutionDir)x64\Production\d3d1.pdb $(SolutionDir)dist\d3d1.pdb</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="d3d1.h" />
