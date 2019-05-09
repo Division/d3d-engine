@@ -42,7 +42,12 @@ Engine::Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_p
 	_shaderGenerator = std::make_unique<ShaderGenerator>(); // before dx is ready
 	hWnd = _window->initWindow(width, height, hInstance);
 
-	_initDirectX();
+	_engineInitialized = _initDirectX();
+	
+	if (!_engineInitialized) {
+		return;
+	}
+
 	_sceneRenderer = std::make_unique<SceneRenderer>(); // after dx is ready
 
 	QueryPerformanceCounter(&_lastTime);
@@ -59,7 +64,7 @@ Engine::~Engine()
 	}
 }
 
-void Engine::_initDirectX()
+bool Engine::_initDirectX()
 {
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -87,18 +92,45 @@ void Engine::_initDirectX()
 	deviceFlags = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-	D3D11CreateDeviceAndSwapChain(NULL,
+	const D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_0 };
+	D3D_FEATURE_LEVEL succeededFeatureLevel;
+
+	auto createDeviceResult = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
 		deviceFlags,
-		NULL,
-		NULL,
+		featureLevels,
+		3,
 		D3D11_SDK_VERSION,
 		&swapChainDesc,
 		&swapchain,
 		(ID3D11Device **)&dev,
-		NULL,
+		&succeededFeatureLevel,
 		(ID3D11DeviceContext **)&context);
+
+	if (succeededFeatureLevel == D3D_FEATURE_LEVEL_11_1) {
+		ENGLog("%s", "D3D_FEATURE_LEVEL_11_1 initialized");
+	}
+	else if (succeededFeatureLevel == D3D_FEATURE_LEVEL_11_0) {
+		ENGLog("%s", "D3D_FEATURE_LEVEL_11_0 initialized");
+	}
+	else if (succeededFeatureLevel == D3D_FEATURE_LEVEL_10_0) {
+		ENGLog("%s", "WARNING: D3D_FEATURE_LEVEL_10_0 initialized. DX11 features are not fully supported.");
+	}
+	else {
+		ENGLog("%s", "ERROR: No required feature levels supported");
+	}
+
+	if (FAILED(createDeviceResult)) {
+		ENGLog("%s", "ERROR: D3D device creation failed: %d", createDeviceResult);
+		return false;
+	}
+
+	DXCaps::initialize(dev);
+
+	if (!DXCaps::ConstantBufferOffsetting()) {
+		ENGLog("%s", "ERROR: ConstantBufferOffsetting is not supported! You WILL see the artifacts.");
+	}
 
 	// get the address of the back buffer
 	ID3D11Texture2D *pBackBuffer;
@@ -115,7 +147,7 @@ void Engine::_initDirectX()
 	ThrowIfFailed(dev->QueryInterface(IID_PPV_ARGS(&_dxDebug)));
 #endif
 
-	_initPipeline();
+	return true;
 }
 
 ID3D11RenderTargetView *Engine::renderTargetView() const { 
@@ -134,6 +166,11 @@ TexturePtr Engine::projectorTexture() const {
 }
 
 void Engine::startLoop() {
+	if (!_engineInitialized) {
+		ENGLog("%s", "Can't start mainloop since engine wasn't able to initialize");
+		return;
+	}
+
 	while (!_window->quitTriggered()) {
 		_window->processMessages();
 		render();
@@ -142,11 +179,6 @@ void Engine::startLoop() {
 
 void Engine::_mainLoop() {
 	
-}
-
-
-void Engine::_initPipeline() {
-
 }
 
 void Engine::render() {

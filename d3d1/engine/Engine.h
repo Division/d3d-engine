@@ -50,8 +50,7 @@ public:
 
 private:
 	void _mainLoop();
-	void _initDirectX();
-	void _initPipeline();
+	bool _initDirectX();
 
 private:
 	HWND hWnd;
@@ -74,7 +73,8 @@ private:
 	static Engine *_instance;
 	std::weak_ptr<IGame> _game;
 
-	bool _initialized = false;
+	bool _initialized = false; // Game interface initialized
+	bool _engineInitialized = false; // DX render initialized
 	LARGE_INTEGER _lastTime;
 	double _engineTime;
 	double _frequency = 0.0;

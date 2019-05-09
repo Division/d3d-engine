@@ -6,6 +6,7 @@
 #define CRASHDUMP_ENABLED false
 #endif
 
-// It's being auto updated by the pre-build script
-#define BUILD_COMMIT_HASH L"abdc6c1"
+// It's being auto updated by the pre-build script (Production builds only)
+// Used to generate crash dump name 
+#define BUILD_COMMIT_HASH L"87a9500"
 
