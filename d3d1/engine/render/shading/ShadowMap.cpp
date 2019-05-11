@@ -21,7 +21,7 @@ ShadowMap::ShadowMap(unsigned int resolutionX, unsigned int resolutionY, std::sh
   _inputLayoutCache = inputLayoutCache;
   _depthAtlas = std::make_shared<RenderTarget>(
 	  resolutionX, resolutionY, 
-	  (int)RenderTarget::Mode::Depth | (int)RenderTarget::Mode::DepthBindShaderResource
+	  (int)RenderTarget::Mode::Depth | (int)RenderTarget::Mode::DepthBindShaderResource, 1
   );
 
   float emptySpacing = (float)((CELL_COUNT - 1u) * _pixelSpacing);

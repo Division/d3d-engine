@@ -22,7 +22,7 @@ class RenderTarget;
 
 class Engine : public ID3DContextProvider {
 public:
-	Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_ptr<IGame> game);
+	Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, uint sampleCount, std::weak_ptr<IGame> game);
 	~Engine();
 
 	static Engine *Get() { return _instance; }
@@ -37,14 +37,9 @@ public:
 	const Window *window() const { return _window.get(); }
 
 	RenderTargetPtr renderTarget() const { return _renderTarget; }
-	ID3D11RenderTargetView *renderTargetView() const;
-	ID3D11DepthStencilView *depthStencilView() const;
 	void projectorTexture(TexturePtr texture);
 	TexturePtr projectorTexture() const;
-
-//	ID3D11RenderTargetView *renderTargetView() const { return backbuffer; };
-//	ID3D11DepthStencilView *depthStencilView() const { return depthStencil; };
-
+	uint32_t multisampleCount() const { return _sampleCount; }
 	void render();
 	void renderScene(std::shared_ptr<Scene> scene, ICameraParamsProviderPtr camera, ICameraParamsProviderPtr camera2D);
 
@@ -73,6 +68,7 @@ private:
 	static Engine *_instance;
 	std::weak_ptr<IGame> _game;
 
+	uint32_t _sampleCount;
 	bool _initialized = false; // Game interface initialized
 	bool _engineInitialized = false; // DX render initialized
 	LARGE_INTEGER _lastTime;

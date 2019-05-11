@@ -3,6 +3,13 @@
 struct VIn {
     float4 position : POSITION;
     float4 normal : NORMAL;
+    
+#if defined(ATTRIB_TANGENT)
+    float4 tangent : TANGENT;
+#endif
+#if defined(ATTRIB_BITANGENT)
+    float4 binormal : BINORMAL;
+#endif
 #if defined(ATTRIB_TEXCOORD0)
     float2 texCoord0 : TEXCOORD;
 #endif

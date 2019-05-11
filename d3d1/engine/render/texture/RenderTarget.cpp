@@ -2,8 +2,8 @@
 #include "Texture.h"
 #include "Engine.h"
 
-RenderTarget::RenderTarget(int32_t width, int32_t height, TexturePtr colorTexture, TexturePtr depthTexture, int mode)
-	: _width(width), _height(height), 
+RenderTarget::RenderTarget(int32_t width, int32_t height, TexturePtr colorTexture, TexturePtr depthTexture, int mode, uint32_t sampleCount)
+	: _width(width), _height(height), _sampleCount(sampleCount),
 	_hasColor(mode & (int)Mode::Color), _hasDepth(mode & (int)Mode::Depth), 
 	_colorShaderResource(mode & (int)Mode::ColorBindShaderResource), _depthShaderResource(mode & (int)Mode::DepthBindShaderResource),
 	_colorTexture(colorTexture), _depthTexture(depthTexture)
@@ -16,15 +16,21 @@ RenderTarget::RenderTarget(int32_t width, int32_t height, TexturePtr colorTextur
 	_recreateTextures();
 }
 
-RenderTarget::RenderTarget(int32_t width, int32_t height, int mode)
-	: RenderTarget(width, height, nullptr, nullptr, mode)
+RenderTarget::RenderTarget(int32_t width, int32_t height, int mode, uint32_t sampleCount)
+	: RenderTarget(width, height, nullptr, nullptr, mode, sampleCount)
 {
 	
+}
+
+RenderTarget::~RenderTarget() {
+	SafeRelease(&_renderTargetView);
+	SafeRelease(&_depthStencilView);
 }
 
 void RenderTarget::_recreateTextures()
 {
 	auto device = Engine::Get()->getD3DDevice();
+	bool multisampling = _sampleCount > 1;
 
 	if (_hasColor && !_colorTexture) {
 		_colorTexture = std::make_shared<Texture>();
@@ -38,7 +44,7 @@ void RenderTarget::_recreateTextures()
 	if (_hasColor) {
 		D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
 		renderTargetViewDesc.Format = _colorFormat;	
-		renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+		renderTargetViewDesc.ViewDimension = multisampling ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
 		renderTargetViewDesc.Texture2D.MipSlice = 0;
 		SafeRelease(&_renderTargetView);
 		ThrowIfFailed(
@@ -52,14 +58,14 @@ void RenderTarget::_recreateTextures()
 		if (_depthShaderResource) {
 			bindFlags |= D3D11_BIND_SHADER_RESOURCE;
 		}
-		_depthTexture->initTexture2D(_width, _height, _depthFormat, nullptr, false, bindFlags, _depthShaderResourceFormat);
+		_depthTexture->initTexture2D(_width, _height, _depthFormat, nullptr, false, bindFlags, _depthShaderResourceFormat, _sampleCount);
 	}
 
 	if (_depthTexture) {
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 		ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
 		depthStencilViewDesc.Format = _depthStencilViewFormat;
-		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.ViewDimension = multisampling ? D3D11_DSV_DIMENSION_TEXTURE2DMS : D3D11_DSV_DIMENSION_TEXTURE2D;
 		depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 		SafeRelease(&_depthStencilView);

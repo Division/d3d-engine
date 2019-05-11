@@ -24,7 +24,8 @@ Engine *Engine::_instance = nullptr;
 
 //tbb::task_scheduler_init init(1);
 
-Engine::Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, std::weak_ptr<IGame> game) : _game(game) {
+Engine::Engine(HINSTANCE hInstance, uint32_t width, uint32_t height, uint sampleCount, std::weak_ptr<IGame> game)
+	: _game(game), _sampleCount(sampleCount) {
 	_instance = this;
 	SetThreadAffinityMask(GetCurrentThread(), 1 << 0);
 	
@@ -81,7 +82,7 @@ bool Engine::_initDirectX()
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.OutputWindow = hWnd;
-	swapChainDesc.SampleDesc.Count = 1;
+	swapChainDesc.SampleDesc.Count = _sampleCount;
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDesc.Windowed = TRUE;
@@ -139,7 +140,7 @@ bool Engine::_initDirectX()
 	// use the back buffer address to create the render target
 	_renderTarget = std::make_shared<RenderTarget>(
 		_window->width(), _window->height(), backBufferTexture, nullptr,
-		(int)RenderTarget::Mode::Color | (int)RenderTarget::Mode::ColorBindShaderResource | (int)RenderTarget::Mode::Depth
+		(int)RenderTarget::Mode::Color | (int)RenderTarget::Mode::ColorBindShaderResource | (int)RenderTarget::Mode::Depth, _sampleCount
 	);
 	pBackBuffer->Release();
 
@@ -150,13 +151,6 @@ bool Engine::_initDirectX()
 	return true;
 }
 
-ID3D11RenderTargetView *Engine::renderTargetView() const { 
-	return _renderTarget->renderTargetView(); 
-};
-
-ID3D11DepthStencilView *Engine::depthStencilView() const { 
-	return _renderTarget->depthStencilView(); 
-}
 void Engine::projectorTexture(TexturePtr texture) {
 	_sceneRenderer->projectorTexture(texture);
 }

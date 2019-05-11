@@ -17,7 +17,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	ErrorDump::setup();
 
 	game = std::make_shared<Game>();
-	engine = std::make_unique<Engine>(hInstance, 1920, 1080, game);
+	engine = std::make_unique<Engine>(hInstance, 1920, 1080, 8, game);
 	//engine = std::make_unique<Engine>(hInstance, 800, 600, game);
 	engine->startLoop();
 

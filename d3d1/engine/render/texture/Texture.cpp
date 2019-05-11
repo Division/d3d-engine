@@ -36,7 +36,7 @@ void Texture::initTexture2D(int32_t width, int32_t height, int32_t channels, boo
 	this->initTexture2D(width, height, format, data, mipmaps);
 }
 
-void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *data, bool mipmaps, UINT bindFlags, DXGI_FORMAT shaderResourceFormat) {
+void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *data, bool mipmaps, UINT bindFlags, DXGI_FORMAT shaderResourceFormat, uint32_t sampleCount) {
 	_release();
 
 	// Texture
@@ -52,7 +52,6 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 	textureDesc.Format = format;
 	textureDesc.Usage = D3D11_USAGE_DEFAULT;
 	textureDesc.MipLevels = mipmaps ? 0 : 1;
-	//textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 
 	if (mipmaps) {
@@ -60,8 +59,7 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 	}
 
-	// Don't use multi-sampling.
-	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Count = sampleCount;
 	textureDesc.SampleDesc.Quality = 0;
 
 	textureDesc.BindFlags = bindFlags;
@@ -85,7 +83,7 @@ void Texture::initTexture2D(int width, int height, DXGI_FORMAT format, void *dat
 	D3D11_SHADER_RESOURCE_VIEW_DESC textureViewDesc;
 	ZeroMemory(&textureViewDesc, sizeof(textureViewDesc));
 	textureViewDesc.Format = shaderResourceFormat;
-	textureViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	textureViewDesc.ViewDimension = sampleCount > 1 ? D3D11_SRV_DIMENSION_TEXTURE2DMS : D3D11_SRV_DIMENSION_TEXTURE2D;
 	textureViewDesc.Texture2D.MipLevels = mipmaps ? -1 : 1;
 	textureViewDesc.Texture2D.MostDetailedMip = 0;
 
