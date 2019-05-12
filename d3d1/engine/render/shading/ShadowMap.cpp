@@ -19,10 +19,12 @@ const auto MAX_MAPS = CELL_COUNT * CELL_COUNT;
 ShadowMap::ShadowMap(unsigned int resolutionX, unsigned int resolutionY, std::shared_ptr<InputLayoutCache> inputLayoutCache) {
   _resolution = uvec2(resolutionX, resolutionY);
   _inputLayoutCache = inputLayoutCache;
-  _depthAtlas = std::make_shared<RenderTarget>(
-	  resolutionX, resolutionY, 
-	  (int)RenderTarget::Mode::Depth | (int)RenderTarget::Mode::DepthBindShaderResource, 1
-  );
+
+  auto renderTargetInit = RenderTargetInitializer()
+	  .size(resolutionX, resolutionY)
+	  .depthTarget(true);
+
+  _depthAtlas = std::make_shared<RenderTarget>(renderTargetInit);
 
   float emptySpacing = (float)((CELL_COUNT - 1u) * _pixelSpacing);
   _cellPixelSize = glm::floor(vec2(resolutionX - emptySpacing, resolutionY - emptySpacing) / (float)CELL_COUNT);

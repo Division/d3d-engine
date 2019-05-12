@@ -77,7 +77,7 @@ bool Engine::_initDirectX()
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.BufferDesc.Width = _window->width();
 	swapChainDesc.BufferDesc.Height = _window->height();
-	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -138,10 +138,13 @@ bool Engine::_initDirectX()
 	swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 	TexturePtr backBufferTexture = std::make_shared<Texture>(pBackBuffer);
 	// use the back buffer address to create the render target
-	_renderTarget = std::make_shared<RenderTarget>(
-		_window->width(), _window->height(), backBufferTexture, nullptr,
-		(int)RenderTarget::Mode::Color | (int)RenderTarget::Mode::ColorBindShaderResource | (int)RenderTarget::Mode::Depth, _sampleCount
-	);
+
+	auto renderTargetInit = RenderTargetInitializer()
+		.size(_window->width(), _window->height())
+		.colorTarget(true, _sampleCount, DXGI_FORMAT_R16G16B16A16_FLOAT, backBufferTexture)
+		.depthTarget(false, DXGI_FORMAT_D24_UNORM_S8_UINT, nullptr);
+
+	_renderTarget = std::make_shared<RenderTarget>(renderTargetInit);
 	pBackBuffer->Release();
 
 #if ENGINE_DIRECTX_DEBUG

@@ -3,6 +3,44 @@
 #include "EngineTypes.h"
 #include <d3d11_1.h>
 
+struct RenderTargetInitializer {
+
+	RenderTargetInitializer &size(uint32_t width, uint32_t height) {
+		this->width = width;
+		this->height = height;
+		return *this;
+	}
+
+	RenderTargetInitializer &colorTarget(bool bindShaderResource, uint32_t sampleCount = 1, DXGI_FORMAT colorFormat = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, TexturePtr colorTexture = nullptr) {
+		hasColor = true;
+		colorShaderResource = bindShaderResource;
+		this->sampleCount = sampleCount;
+		this->colorFormat = colorFormat;
+		this->colorTexture = colorTexture;
+		return *this;
+	}
+
+	RenderTargetInitializer &depthTarget(bool bindShaderResource, DXGI_FORMAT depthFormat = DXGI_FORMAT_R32_TYPELESS, TexturePtr depthTexture = nullptr) {
+		hasDepth = true;
+		depthShaderResource = bindShaderResource;
+		this->depthFormat = depthFormat;
+		this->depthTexture = depthTexture;
+		return *this;
+	}
+
+	uint32_t sampleCount = 1;
+	uint32_t width = 0;
+	uint32_t height = 0;
+	TexturePtr colorTexture = nullptr;
+	TexturePtr depthTexture = nullptr;
+	bool hasColor = false;
+	bool colorShaderResource = false;
+	bool hasDepth = false;
+	bool depthShaderResource = false;
+	DXGI_FORMAT colorFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	DXGI_FORMAT depthFormat = DXGI_FORMAT_R32_TYPELESS;
+};
+
 class RenderTarget {
 public:
 	enum class Mode : int {
@@ -14,6 +52,7 @@ public:
 
 	RenderTarget(int32_t width, int32_t height, TexturePtr colorTexture, TexturePtr depthTexture, int mode, uint32_t sampleCount);
 	RenderTarget(int32_t width, int32_t height, int mode, uint32_t sampleCount);
+	RenderTarget(const RenderTargetInitializer &initializer);
 	~RenderTarget();
 
 	ID3D11RenderTargetView *renderTargetView() const { return _renderTargetView; };
@@ -38,9 +77,9 @@ private:
 	bool _colorShaderResource;
 	bool _hasDepth;
 	bool _depthShaderResource;
-	DXGI_FORMAT _colorFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
-	DXGI_FORMAT _depthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	DXGI_FORMAT _depthShaderResourceFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	DXGI_FORMAT _depthStencilViewFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	DXGI_FORMAT _colorFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	DXGI_FORMAT _depthFormat = DXGI_FORMAT_R32_TYPELESS;
+	DXGI_FORMAT _depthShaderResourceFormat = DXGI_FORMAT_R32_TYPELESS;
+	DXGI_FORMAT _depthStencilViewFormat = DXGI_FORMAT_R32_TYPELESS;
 	ID3D11RenderTargetView *_renderTargetView = 0;
 };

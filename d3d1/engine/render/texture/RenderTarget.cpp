@@ -17,9 +17,31 @@ RenderTarget::RenderTarget(int32_t width, int32_t height, TexturePtr colorTextur
 }
 
 RenderTarget::RenderTarget(int32_t width, int32_t height, int mode, uint32_t sampleCount)
-	: RenderTarget(width, height, nullptr, nullptr, mode, sampleCount)
-{
+	: RenderTarget(width, height, nullptr, nullptr, mode, sampleCount) {
+}
+
+RenderTarget::RenderTarget(const RenderTargetInitializer &initializer) {
+	_sampleCount = initializer.sampleCount;
+	_width = initializer.width;
+	_height = initializer.height;
+	_colorTexture = initializer.colorTexture;
+	_depthTexture = initializer.depthTexture;
+	_hasColor = initializer.hasColor;
+	_colorShaderResource = initializer.colorShaderResource;
+	_hasDepth = initializer.hasDepth;
+	_depthShaderResource = initializer.depthShaderResource;
+	_colorFormat = initializer.colorFormat;
+	_depthFormat = initializer.depthFormat;
+	_depthShaderResourceFormat = _depthFormat;
+	_depthStencilViewFormat = _depthFormat;
 	
+	if (_depthShaderResource) {
+		_depthFormat = DXGI_FORMAT_R32_TYPELESS;
+		_depthShaderResourceFormat = DXGI_FORMAT_R32_FLOAT;
+		_depthStencilViewFormat = DXGI_FORMAT_D32_FLOAT;
+	}
+
+	_recreateTextures();
 }
 
 RenderTarget::~RenderTarget() {
