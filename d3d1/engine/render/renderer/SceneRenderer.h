@@ -10,7 +10,9 @@ class InputLayoutCache;
 class IShadowCaster;
 class PassRenderer;
 class ShadowMap;
+class RenderTarget;
 class LightGrid;
+class PostEffect;
 
 class SceneRenderer {
 public:
@@ -34,6 +36,8 @@ private:
 	std::unique_ptr<PassRenderer> _depthPrePassRenderer;
 	std::unique_ptr<ShadowMap> _shadowMap;
 	std::shared_ptr<LightGrid> _lightGrid;
+	std::shared_ptr<RenderTarget> _hdrRenderTarget;
+	std::shared_ptr<PostEffect> _postEffect;
 	std::shared_ptr<ConstantBufferManager> _constantBufferManager;
 	std::shared_ptr<InputLayoutCache> _inputLayoutCache;
 	//InputLayoutCache *_inputLayoutCache;

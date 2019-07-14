@@ -19,8 +19,11 @@
 #include "tbb/blocked_range.h"
 #include "utils/Performance.h"
 #include "BuildConfig.h"
+#include "cvmarkersobj.h"
 
 Engine *Engine::_instance = nullptr;
+
+Concurrency::diagnostic::marker_series markers_engine(_T("engine"));
 
 //tbb::task_scheduler_init init(1);
 
@@ -61,7 +64,7 @@ Engine::~Engine()
 	//backbuffer->Release();
 	context->Release();
 	if (_dxDebug) {
-		_dxDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+		_dxDebug->ReportLiveDeviceObjects(D3D11_RLDO_IGNORE_INTERNAL);
 	}
 }
 
@@ -77,7 +80,8 @@ bool Engine::_initDirectX()
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.BufferDesc.Width = _window->width();
 	swapChainDesc.BufferDesc.Height = _window->height();
-	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	//swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
 	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -141,7 +145,7 @@ bool Engine::_initDirectX()
 
 	auto renderTargetInit = RenderTargetInitializer()
 		.size(_window->width(), _window->height())
-		.colorTarget(true, _sampleCount, DXGI_FORMAT_R16G16B16A16_FLOAT, backBufferTexture)
+		.colorTarget(true, _sampleCount, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, backBufferTexture)
 		.depthTarget(false, DXGI_FORMAT_D24_UNORM_S8_UINT, nullptr);
 
 	_renderTarget = std::make_shared<RenderTarget>(renderTargetInit);
@@ -216,7 +220,10 @@ void Engine::render() {
 	engine::Performance::startTimer(engine::Performance::Entry::SwapBuffers);
 	//context->OMSetRenderTargets(1, &backbuffer, depthStencil);
 	_renderTarget->activate(context);
-	swapchain->Present(0, 0);
+	{
+		Concurrency::diagnostic::span s1(markers_engine, _T("Swapchain present"));
+		swapchain->Present(0, 0);
+	}
 	engine::Performance::stopTimer(engine::Performance::Entry::SwapBuffers);
 }
 

@@ -289,7 +289,8 @@ float4 PShader(VOut input) : SV_TARGET
     result *= lightsColor;
 #endif
 
-    float gamma = 2.2;
-    result.rgb = pow(result.rgb, 1.0/gamma);
+    // conversion to sRGB is done on d3d side
+    //float gamma = 2.2;
+    //result.rgb = pow(result.rgb, 1.0/gamma);
     return result;
 }

@@ -60,7 +60,7 @@ void RenderTarget::_recreateTextures()
 		if (_colorShaderResource) {
 			bindFlags |= D3D11_BIND_SHADER_RESOURCE;
 		}
-		_colorTexture->initTexture2D(_width, _height, _colorFormat, nullptr, false, bindFlags);
+		_colorTexture->initTexture2D(_width, _height, _colorFormat, nullptr, false, bindFlags, DXGI_FORMAT_UNKNOWN, _sampleCount);
 	}
 
 	if (_hasColor) {

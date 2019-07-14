@@ -61,6 +61,9 @@ public:
 	TexturePtr framebufferTexture() const { return _colorTexture; }
 	TexturePtr depthTexture() const { return _depthTexture; }
 
+	const int32_t width() const { return _width;  }
+	const int32_t height() const { return _height; }
+
 	void activate(ID3D11DeviceContext1 *context, bool color = true, bool depth = true);
 
 private:

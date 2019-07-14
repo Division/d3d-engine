@@ -70,6 +70,12 @@
     <Filter Include="engine\render\buffer">
       <UniqueIdentifier>{9e53472a-8fc7-4b06-b8da-0ed43797ca9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="engine\render\posteffect">
+      <UniqueIdentifier>{69f20c0b-e09f-48c2-888a-47ea132066b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\render\device">
+      <UniqueIdentifier>{3314da8a-5137-4548-871b-d65cfba3d0c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -306,6 +312,9 @@
     <ClInclude Include="engine\BuildConfig.h">
       <Filter>engine</Filter>
     </ClInclude>
+    <ClInclude Include="engine\render\posteffect\PostEffect.h">
+      <Filter>engine\render\posteffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -484,6 +493,9 @@
     </ClCompile>
     <ClCompile Include="engine\system\ErrorDump.cpp">
       <Filter>engine\system</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\render\posteffect\PostEffect.cpp">
+      <Filter>engine\render\posteffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

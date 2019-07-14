@@ -286,6 +286,7 @@ copy $(SolutionDir)x64\Production\d3d1.pdb $(SolutionDir)dist\d3d1.pdb</Command>
     <ClInclude Include="engine\render\material\Material.h" />
     <ClInclude Include="engine\render\mesh\Mesh.h" />
     <ClInclude Include="engine\render\mesh\VertexAttrib.h" />
+    <ClInclude Include="engine\render\posteffect\PostEffect.h" />
     <ClInclude Include="engine\render\renderer\ConstantBufferManager.h" />
     <ClInclude Include="engine\render\renderer\ICameraParamsProvider.h" />
     <ClInclude Include="engine\render\renderer\InputLayoutCache.h" />
@@ -359,6 +360,7 @@ copy $(SolutionDir)x64\Production\d3d1.pdb $(SolutionDir)dist\d3d1.pdb</Command>
     <ClCompile Include="engine\render\buffer\MemoryBuffer.cpp" />
     <ClCompile Include="engine\render\material\Material.cpp" />
     <ClCompile Include="engine\render\mesh\Mesh.cpp" />
+    <ClCompile Include="engine\render\posteffect\PostEffect.cpp" />
     <ClCompile Include="engine\render\renderer\ConstantBufferManager.cpp" />
     <ClCompile Include="engine\render\renderer\InputLayoutCache.cpp" />
     <ClCompile Include="engine\render\renderer\PassRenderer.cpp" />
